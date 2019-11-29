@@ -18,6 +18,11 @@ Pull: `docker pull livingdocs/docker-node:19-12`
 
 `docker build -t livingdocs/postgres-exporter -f postgres-exporter/Dockerfile ./postgres-exporter`
 
+### livingdocs/certbot-route53-postgres
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/certbot-route53-postgres
+Pull: `docker pull livingdocs/certbot-route53-postgres`
+Build: `docker build -t livingdocs/certbot-route53-postgres - < Dockerfile.certbot-route53-postgres`
 
 ### livingdocs/elasticsearch
 
