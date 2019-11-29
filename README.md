@@ -14,6 +14,10 @@ The official docker image with node, git and curl
 On Docker Hub: https://hub.docker.com/r/livingdocs/docker-node
 Pull: `docker pull livingdocs/docker-node:19-12`
 
+### livingdocs/postgres-exporter
+
+`docker build -t livingdocs/postgres-exporter -f postgres-exporter/Dockerfile ./postgres-exporter`
+
 
 ### livingdocs/elasticsearch
 
