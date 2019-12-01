@@ -1,0 +1,68 @@
+#!/bin/bash
+set -ef
+if [[ "${PLUGIN_WHEN_CHANGED:-}" ]]; then files-changed "$PLUGIN_WHEN_CHANGED" || exit 0; fi
+docker-login
+
+SHA_TAG=$PLUGIN_REPO:sha-${DRONE_COMMIT_SHA:-}
+BRANCH_TAG=$PLUGIN_REPO:branch-$(echo "${DRONE_BRANCH:-}" | sed 's/[^a-zA-Z0-9.-]/-/g')
+
+# If `pull` is defined, we only pull the image, no build happens
+if [[ "${PLUGIN_PULL:-false}" == "true" ]]; then
+  if [ "$#" != "0" ]; then
+    >&2 echo Pulling SHA Tag $SHA_TAG and execute commands
+    docker pull $SHA_TAG
+    exec $@
+  else
+    >&2 echo Pulling SHA Tag $SHA_TAG and exit
+    exec docker pull $SHA_TAG
+  fi
+fi
+
+if [ "$#" != "0" ]; then exec $@; fi
+
+EXTRA_OPTS="--tag=$SHA_TAG --tag=$BRANCH_TAG"
+if [[ -n "${PLUGIN_TARGET:-}" ]]; then EXTRA_OPTS="$EXTRA_OPTS --target=${PLUGIN_TARGET}"; fi
+
+LABELS="--label org.opencontainers.image.created=$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+LABELS="$LABELS --label org.opencontainers.image.source=${DRONE_REPO_LINK:-}"
+if [ -n "${DRONE_TAG:-}" ]; then LABELS="$LABELS --label org.opencontainers.image.version=${DRONE_TAG:-}"; fi
+LABELS="$LABELS --label org.opencontainers.image.vendor=Livingdocs"
+LABELS="$LABELS --label org.opencontainers.image.revision=${DRONE_COMMIT_SHA:-}"
+
+>&2 echo -----------------
+>&2 echo SHA Tag: $SHA_TAG
+>&2 echo Branch Tag: $BRANCH_TAG
+>&2 echo --------------------
+
+PLUGIN_CONTEXT="${PLUGIN_CONTEXT:-.}"
+PLUGIN_DOCKERFILE="${PLUGIN_DOCKERFILE:-Dockerfile}"
+PLUGIN_CACHE=${PLUGIN_CACHE:-true}
+if [ "$PLUGIN_CACHE" == "false" ]; then EXTRA_OPTS="$EXTRA_OPTS --no-cache"; fi
+
+if [ "${PLUGIN_BUILDX:-false}" == "true" ]; then
+  if [ "$PLUGIN_CACHE" == "true" ]; then EXTRA_OPTS="$EXTRA_OPTS --cache-from=type=registry,ref=$PLUGIN_REPO"; fi
+
+  docker buildx use docker-node 2> /dev/null || (docker buildx create --name=docker-node && docker buildx use docker-node)
+  if [ "${PLUGIN_LOAD:-false}" == "true" ]; then
+    docker buildx build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS --load $PLUGIN_CONTEXT
+  fi
+
+  if [ "${PLUGIN_PUSH:-false}" == "true" ]; then
+    docker buildx build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS --push $PLUGIN_CONTEXT
+  fi
+else
+  docker build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS $PLUGIN_CONTEXT
+  if [ "${PLUGIN_PUSH:-false}" == "true" ]; then
+    docker push "$SHA_TAG" &
+    docker push "$BRANCH_TAG" &
+    wait -n
+    wait -n
+  fi
+fi
+
+>&2 echo -----------------
+>&2 echo SHA Tag: $SHA_TAG
+>&2 echo Branch Tag: $BRANCH_TAG
+>&2 echo --------------------
+
+>&2 echo "Done"

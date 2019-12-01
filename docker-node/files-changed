@@ -1,0 +1,34 @@
+#!/bin/bash
+BEFORE=${DRONE_COMMIT_BEFORE:-}
+AFTER=${DRONE_COMMIT_AFTER:-}
+
+if [ "$BEFORE" == "" ] || [ "$AFTER" == "" ]; then
+  >&2 echo "The environment variables 'DRONE_COMMIT_BEFORE' and 'DRONE_COMMIT_AFTER' must be defined. Skipping build."
+  exit 78
+fi
+
+git rev-parse HEAD > /dev/null 2>&1
+[ $? -gt 0 ] && >&2 echo "Please run that command in a git directory. Skipping build." && exit 1
+
+FILES_CHANGED=$(git diff $BEFORE $AFTER --name-only)
+if [ "$?" != "0" ]; then
+  >&2 echo "Please run that command in a git directory. Skipping build."
+  exit 78
+fi
+
+# A regex pattern
+PATTERN="${1:-.*}"
+FILTERED_FILES_CHANGED=$(echo "$FILES_CHANGED" | grep -E "$PATTERN")
+FILES_CHANGED_COUNT="$(echo "$FILTERED_FILES_CHANGED" | wc -l | tr -d ' ')"
+
+if [ $FILES_CHANGED_COUNT -eq 0 ]; then
+  >&2 echo "No File changes detected. Skipping the build."
+  exit 78
+else
+  >&2 echo "$FILES_CHANGED_COUNT File changes detected. Triggering the build:"
+  >&2 echo "----------------------------------------------"
+  >&2 echo "$(echo "$FILTERED_FILES_CHANGED" | head -n9)"
+  [ $FILES_CHANGED_COUNT -gt 9 ] && >&2 echo "... and $((FILES_CHANGED_COUNT - 9)) more"
+  >&2 echo "----------------------------------------------"
+  exit 0
+fi

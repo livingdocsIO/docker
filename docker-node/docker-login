@@ -1,0 +1,15 @@
+#!/bin/bash
+PLUGIN_USERNAME="${PLUGIN_USERNAME:-${DOCKER_USERNAME:-}}"
+PLUGIN_PASSWORD="${PLUGIN_PASSWORD:-${DOCKER_PASSWORD:-}}"
+if [ "${PLUGIN_USERNAME:-}" ] || [ "${PLUGIN_PASSWORD:-}" ]; then
+  OUTPUT=$(echo "$PLUGIN_PASSWORD" | docker login -u="$PLUGIN_USERNAME" --password-stdin 2>&1)
+  if [ "$?" != "0" ]; then
+    >&2 echo "Failed to set credentials for user $PLUGIN_USERNAME"
+    >&2 echo "$OUTPUT"
+    exit 1
+  else
+    >&2 echo "Docker credentials configured for user $PLUGIN_USERNAME"
+  fi
+else
+  >&2 echo "No docker credentials provided"
+fi

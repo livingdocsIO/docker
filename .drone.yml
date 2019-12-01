@@ -1,0 +1,63 @@
+---
+kind: pipeline
+name: build
+
+steps:
+- name: docker-node
+  image: livingdocs/docker-node
+  pull: always
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: ^docker-node/
+    context: ./docker-node
+    dockerfile: ./docker-node/Dockerfile
+    repo: livingdocs/docker-node
+
+- name: postgres-exporter
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: ^postgres-exporter/
+    context: ./postgres-exporter
+    dockerfile: ./postgres-exporter/Dockerfile
+    repo: livingdocs/postgres-exporter
+
+- name: certbot-route53-postgres
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: Dockerfile.certbot-route53-postgres
+    dockerfile: Dockerfile.certbot-route53-postgres
+    repo: livingdocs/certbot-route53-postgres
+
+- name: node
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: Dockerfile.node
+    dockerfile: Dockerfile.node
+    repo: livingdocs/node
+
+volumes:
+- name: dockersocket
+  host:
+    path: /var/run/docker.sock
+
+trigger:
+  event: [push]
+---
+kind: signature
+hmac: 66fd99f05f5ea998bf1438cad535dd2fa03c74639368434ce9dade003d7cddda
+
+...
