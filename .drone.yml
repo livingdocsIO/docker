@@ -41,9 +41,6 @@ steps:
   volumes:
     - name: dockersocket
       path: /var/run/docker.sock
-  volumes:
-    - name: dockersocket
-      path: /var/run/docker.sock
   settings:
     whenChanged: Dockerfile.node
     dockerfile: Dockerfile.node
@@ -58,6 +55,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: 66fd99f05f5ea998bf1438cad535dd2fa03c74639368434ce9dade003d7cddda
+hmac: 9571ef94cda179423d7913185aca608cc6e863c26441bad9e93a8f3f23dd166a
 
 ...

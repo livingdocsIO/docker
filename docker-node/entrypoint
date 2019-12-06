@@ -1,13 +1,13 @@
 #!/bin/bash
 set -ef
-if [[ "${PLUGIN_WHEN_CHANGED:-}" ]]; then files-changed "$PLUGIN_WHEN_CHANGED" || exit 0; fi
+if [ "${PLUGIN_WHENCHANGED:-}" ]; then files-changed "$PLUGIN_WHENCHANGED" || exit 0; fi
 docker-login
 
 SHA_TAG=$PLUGIN_REPO:sha-${DRONE_COMMIT_SHA:-}
 BRANCH_TAG=$PLUGIN_REPO:branch-$(echo "${DRONE_BRANCH:-}" | sed 's/[^a-zA-Z0-9.-]/-/g')
 
 # If `pull` is defined, we only pull the image, no build happens
-if [[ "${PLUGIN_PULL:-false}" == "true" ]]; then
+if [ "${PLUGIN_PULL:-false}" == "true" ]; then
   if [ "$#" != "0" ]; then
     >&2 echo Pulling SHA Tag $SHA_TAG and execute commands
     docker pull $SHA_TAG
@@ -21,7 +21,7 @@ fi
 if [ "$#" != "0" ]; then exec $@; fi
 
 EXTRA_OPTS="--tag=$SHA_TAG --tag=$BRANCH_TAG"
-if [[ -n "${PLUGIN_TARGET:-}" ]]; then EXTRA_OPTS="$EXTRA_OPTS --target=${PLUGIN_TARGET}"; fi
+if [ -n "${PLUGIN_TARGET:-}" ]; then EXTRA_OPTS="$EXTRA_OPTS --target=${PLUGIN_TARGET}"; fi
 
 LABELS="--label org.opencontainers.image.created=$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 LABELS="$LABELS --label org.opencontainers.image.source=${DRONE_REPO_LINK:-}"
