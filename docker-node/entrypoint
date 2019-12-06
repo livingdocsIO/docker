@@ -29,10 +29,10 @@ if [ -n "${DRONE_TAG:-}" ]; then LABELS="$LABELS --label org.opencontainers.imag
 LABELS="$LABELS --label org.opencontainers.image.vendor=Livingdocs"
 LABELS="$LABELS --label org.opencontainers.image.revision=${DRONE_COMMIT_SHA:-}"
 
->&2 echo -----------------
+>&2 echo ----------------------------------------------
 >&2 echo SHA Tag: $SHA_TAG
 >&2 echo Branch Tag: $BRANCH_TAG
->&2 echo --------------------
+>&2 echo ----------------------------------------------
 
 PLUGIN_CONTEXT="${PLUGIN_CONTEXT:-.}"
 PLUGIN_DOCKERFILE="${PLUGIN_DOCKERFILE:-Dockerfile}"
@@ -60,9 +60,9 @@ else
   fi
 fi
 
->&2 echo -----------------
+>&2 echo ----------------------------------------------
 >&2 echo SHA Tag: $SHA_TAG
 >&2 echo Branch Tag: $BRANCH_TAG
->&2 echo --------------------
+>&2 echo ----------------------------------------------
 
 >&2 echo "Done"

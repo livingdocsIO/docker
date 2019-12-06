@@ -18,17 +18,17 @@ fi
 
 # A regex pattern
 PATTERN="${1:-.*}"
-FILTERED_FILES_CHANGED=$(echo "$FILES_CHANGED" | grep -E "$PATTERN")
-FILES_CHANGED_COUNT="$(echo "$FILTERED_FILES_CHANGED" | wc -l | tr -d ' ')"
+FILTERED_FILES=($(grep -E "$PATTERN" <<< "$FILES_CHANGED"))
+FILTERED_COUNT=${#FILTERED_FILES[@]}
 
-if [ $FILES_CHANGED_COUNT -eq 0 ]; then
-  >&2 echo "No File changes detected. Skipping the build."
+if [ $FILTERED_COUNT -eq 0 ]; then
+  >&2 echo "Skipping the build as no file changed."
   exit 78
 else
-  >&2 echo "$FILES_CHANGED_COUNT File changes detected. Triggering the build:"
+  >&2 echo "Triggering the build as $FILTERED_COUNT files changed:"
   >&2 echo "----------------------------------------------"
-  >&2 echo "$(echo "$FILTERED_FILES_CHANGED" | head -n9)"
-  [ $FILES_CHANGED_COUNT -gt 9 ] && >&2 echo "... and $((FILES_CHANGED_COUNT - 9)) more"
+  >&2 printf '%s\n' "${FILTERED_FILES[@]:0:9}"
+  [ $FILTERED_COUNT -gt 9 ] && >&2 echo "... and $((FILTERED_COUNT - 9)) more"
   >&2 echo "----------------------------------------------"
   exit 0
 fi
