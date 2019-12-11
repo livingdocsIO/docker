@@ -12,15 +12,15 @@ do
 
   >&2 echo ""
   if [ "$IMAGE_ID" != "" ]; then
-    >&2 echo ">> Successfully fetched image $IMAGE_TAG $IMAGE_ID"
+    >&2 echo ">> 🎈 Successfully fetched image $IMAGE_TAG $IMAGE_ID"
     echo $IMAGE_ID
     exit 0
   else
-    >&2 echo ">> Failed to fetch prebuilt image $IMAGE_TAG"
+    >&2 echo ">> 💥 Failed to fetch prebuilt image $IMAGE_TAG"
   fi
 done
 
->&2 echo ">> No prebuilt docker image found"
+>&2 echo ">> 🤯 No prebuilt docker image found"
 # We still exit with 0 because we're handling a missing docker
 # image in the build step. We don't want to cancel the tests here
 exit 0
