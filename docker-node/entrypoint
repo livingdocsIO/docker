@@ -4,7 +4,7 @@ if [ "${PLUGIN_WHENCHANGED:-}" ]; then files-changed "$PLUGIN_WHENCHANGED" || ex
 docker-login
 
 SHA_TAG=$PLUGIN_REPO:sha-${DRONE_COMMIT_SHA:-}
-BRANCH_TAG=$PLUGIN_REPO:branch-$(echo "${DRONE_BRANCH:-}" | sed 's/[^a-zA-Z0-9.-]/-/g')
+BRANCH_TAG=$PLUGIN_REPO:branch-$(sanitize-tag "${DRONE_BRANCH:-}")
 
 # If `pull` is defined, we only pull the image, no build happens
 if [ "${PLUGIN_PULL:-false}" == "true" ]; then

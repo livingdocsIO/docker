@@ -1,0 +1,26 @@
+#!/bin/bash
+trap "exit" INT TERM
+trap 'if [ "$pid" != "" ]; then kill $pid; fi' EXIT
+
+bash -c "while true; do >&2 printf .; sleep 1; done;" &
+pid=$!
+
+for IMAGE_TAG in "$@";
+do
+  >&2 printf "> Try to fetch prebuilt image $IMAGE_TAG"
+  IMAGE_ID=$(docker pull $IMAGE_TAG &> /dev/null && docker images $IMAGE_TAG -q | head -1)
+
+  >&2 echo ""
+  if [ "$IMAGE_ID" != "" ]; then
+    >&2 echo ">> Successfully fetched image $IMAGE_TAG $IMAGE_ID"
+    echo $IMAGE_ID
+    exit 0
+  else
+    >&2 echo ">> Failed to fetch prebuilt image $IMAGE_TAG"
+  fi
+done
+
+>&2 echo ">> No prebuilt docker image found"
+# We still exit with 0 because we're handling a missing docker
+# image in the build step. We don't want to cancel the tests here
+exit 0
