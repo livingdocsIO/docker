@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+
+if [ "${PLUGIN_REPO:-}" == "" ]; then
+  >&2 echo docker-image-tags: Please provide a PLUGIN_REPO environment variable
+  exit 1
+fi
+
+TAG_KEYS=()
+TAG_VALUES=()
+
+if [ "${DRONE_COMMIT_SHA:-}" != "" ]; then
+  TAG_KEYS+=("SHA")
+  TAG_VALUES+=("$PLUGIN_REPO:sha-${DRONE_COMMIT_SHA:-}")
+fi
+
+if [ "${DRONE_BRANCH:-}" != "" ]; then
+  TAG_KEYS+=("BRANCH")
+  DRONE_BRANCH="$(sanitize-tag "${DRONE_BRANCH:-}")"
+  TAG_VALUES+=("$PLUGIN_REPO:branch-$DRONE_BRANCH")
+fi
+
+if [ "${DRONE_TAG:-}" != "" ]; then
+  TAG_KEYS+=("RELEASE")
+  TAG_VALUES+=("$PLUGIN_REPO:$DRONE_TAG")
+fi
+
+>&2 echo ----------------------------------------------
+i=-1
+for key in ${TAG_KEYS[@]};
+do
+  i=$((i + 1))
+  value="${TAG_VALUES[i]}"
+  echo "export ${key}_TAG=${value}"
+  >&2 echo $key Tag: $value
+done
+>&2 echo ----------------------------------------------
