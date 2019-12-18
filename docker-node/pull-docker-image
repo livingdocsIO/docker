@@ -12,7 +12,7 @@ do
 
   >&2 echo ""
   if [ "$IMAGE_ID" != "" ]; then
-    >&2 echo ">> 🎈 Successfully fetched image $IMAGE_TAG $IMAGE_ID"
+    >&2 echo ">> 🎉 Successfully fetched image $IMAGE_TAG $IMAGE_ID"
     echo $IMAGE_ID
     exit 0
   else
