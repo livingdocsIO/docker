@@ -43,6 +43,31 @@ docker build -t livingdocs/certbot-route53-postgres - < Dockerfile.certbot-route
 docker push livingdocs/certbot-route53-postgres
 ```
 
+### livingdocs/letsencrypt
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/letsencrypt
+
+A docker image that sets up a daily cronjob and tries to generate certificates if they need renewal.
+Certificates are pushed to an s3 bucket, so they can be fetched from other scripts.
+
+Build:
+```sh
+cd letsencrypt
+docker build -t livingdocs/letsencrypt .
+docker push livingdocs/letsencrypt
+```
+
+Use:
+```sh
+docker run -it --rm livindocs/letsencrypt
+  -e LETSENCRYPT_CERTIFICATES='[{"email":"operations@livingdocs.io", "domains": ["livingdocs.io"]}]' \
+  -e AWS_REGION=eu-central-1 \
+  -e AWS_PATH_PREFIX=letsencrypt/ \
+  -e AWS_BUCKET=livingdocs \
+  -e AWS_ACCESS_KEY_ID=some-aws-access-key \
+  -e AWS_SECRET_ACCESS_KEY=some-aws-secret-key
+```
+
 ### livingdocs/elasticsearch
 
 ```sh

@@ -1,0 +1,83 @@
+#!/bin/bash
+set -e
+function log () { >&2 echo $@; }
+function fatal () { >&2 echo $@; exit 1; }
+
+function assert () {
+  local value="$1"
+  local path="$2"
+  local expected="$3"
+  local actual="$(jq -r "$path" <<< "$value")"
+  if [ "$expected" == "$actual" ]; then return 0; fi
+
+  if [ -z "$4" ]; then
+    fatal "The value for '$path' of '$value' should be of type '$expected', but got '$actual'."
+  else
+    fatal "$4"
+  fi
+}
+
+DEFAULT_AWS_REGION="${AWS_REGION:-eu-central-1}"
+DEFAULT_AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
+DEFAULT_AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+DEFAULT_AWS_PATH_PREFIX="${AWS_PATH_PREFIX:-letsencrypt/}"
+DEFAULT_LETSENCRYPT_DIR="${LETSENCRYPT_DIR:-/etc/letsencrypt}"
+DEFAULT_LETSENCRYPT_CERTIFICATES="${LETSENCRYPT_CERTIFICATES:-[]}"
+
+function setdefaults () {
+  export AWS_REGION="$DEFAULT_AWS_REGION"
+  export AWS_ACCESS_KEY_ID="$DEFAULT_AWS_ACCESS_KEY_ID"
+  export AWS_SECRET_ACCESS_KEY="$DEFAULT_AWS_SECRET_ACCESS_KEY"
+  export AWS_PATH_PREFIX="$DEFAULT_AWS_PATH_PREFIX"
+  export LETSENCRYPT_DIR="$DEFAULT_LETSENCRYPT_DIR"
+  export LETSENCRYPT_CERTIFICATES="$DEFAULT_LETSENCRYPT_CERTIFICATES"
+}
+
+function createcert () {
+  local row="$1"
+  assert "$row" '.email | type' 'string'
+  assert "$row" '.domains | first | type' 'string'
+  local email=$(jq -r '.email' <<< "$row")
+  local domain="$(jq -r '.domains | first' <<< "$row")"
+  local domains="$(jq -r '.domains | map("-d " + .) | join(" ")' <<< "$row")"
+  [[ "$email" == "" ]] && fatal "The json property 'email' is mandatory. It wasn't defined."
+  [[ "$domain" == "" ]] && fatal "The json property 'domains' must be an array with at least one entry."
+
+  local awsRegion="$(jq -r '.region // empty' <<< "$row")"
+  local awsAccessKeyID="$(jq -r '.accessKeyID // empty' <<< "$row")"
+  local awsSecretAccessKey="$(jq -r '.secretAccessKey // empty' <<< "$row")"
+
+  export AWS_HOSTED_ZONE_ID="$(jq -r '.hostedZoneID // empty' <<< "$row")"
+  export AWS_REGION="${awsRegion:-$DEFAULT_AWS_REGION}"
+  export AWS_ACCESS_KEY_ID="${awsAccessKeyID:-$DEFAULT_AWS_ACCESS_KEY_ID}"
+  export AWS_SECRET_ACCESS_KEY="${awsSecretAccessKey:-$DEFAULT_AWS_SECRET_ACCESS_KEY}"
+  if [ "$AWS_HOSTED_ZONE_ID" == "" ]; then unset AWS_HOSTED_ZONE_ID; fi
+  [[ "$AWS_REGION" == "" ]] && fatal "The json property 'region' is mandatory. It wasn't defined."
+  [[ "$AWS_ACCESS_KEY_ID" == "" ]] && fatal "The json property 'accessKeyID' is mandatory. It wasn't defined."
+  [[ "$AWS_SECRET_ACCESS_KEY" == "" ]] && fatal "The json property 'secretAccessKey' is mandatory. It wasn't defined."
+
+  if [ "$(jq -r '.enabled' <<< "$row")" == "false" ]; then
+    log "Skip 'lego $domains renew' for disabled domain"
+  elif test -f "$LETSENCRYPT_DIR/certificates/$domain.json"; then
+    log "Generate certificate using 'lego $domains renew'."
+    lego -a --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) renew
+  else
+    log "Generate certificate using 'lego $domains run'."
+    lego -a --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) run
+  fi
+}
+
+log Start
+setdefaults
+assert "$LETSENCRYPT_CERTIFICATES" 'first | type' 'object' "The environment variable 'LETSENCRYPT_CERTIFICATES' must be an array with objects."
+[[ "$AWS_BUCKET" == "" ]] && fatal "The environment variable 'AWS_BUCKET' is mandatory. It wasn't defined."
+[[ "$AWS_REGION" == "" ]] && fatal "The environment variable 'AWS_REGION' is mandatory. It wasn't defined."
+[[ "$AWS_ACCESS_KEY_ID" == "" ]] && fatal "The environment variable 'AWS_ACCESS_KEY_ID' is mandatory. It wasn't defined."
+[[ "$AWS_SECRET_ACCESS_KEY" == "" ]] && fatal "The environment variable 'AWS_SECRET_ACCESS_KEY' is mandatory. It wasn't defined."
+aws s3 sync --no-progress "s3://$AWS_BUCKET/$AWS_PATH_PREFIX" "$LETSENCRYPT_DIR"
+for row in $(jq -c '.[]' <<< "$LETSENCRYPT_CERTIFICATES"); do
+  createcert "$row"
+done
+setdefaults
+aws s3 sync --no-progress "$LETSENCRYPT_DIR" "s3://$AWS_BUCKET/$AWS_PATH_PREFIX"
+log Done

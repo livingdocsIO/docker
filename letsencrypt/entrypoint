@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+echo "@daily /letsencrypt" | crontab -
+/letsencrypt
+exec crond -f
