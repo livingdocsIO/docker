@@ -58,7 +58,7 @@ function createcert () {
 
   if [ "$(jq -r '.enabled' <<< "$row")" == "false" ]; then
     log "Skip 'lego $domains renew' for disabled domain"
-  elif test -f "$LETSENCRYPT_DIR/certificates/$domain.json"; then
+  elif test -f "$LETSENCRYPT_DIR/certificates/$(tr '*' '_' <<< "$domain").json"; then
     log "Generate certificate using 'lego $domains renew'."
     lego -a --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) renew
   else
