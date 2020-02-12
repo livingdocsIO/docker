@@ -1,0 +1,61 @@
+#!/bin/bash
+set -e
+mkdir -p /etc/pgbouncer
+export PGUSER=$PGBOUNCER_UPSTREAM_USER
+
+echo \"$PGBOUNCER_UPSTREAM_USER\" \"$PGBOUNCER_UPSTREAM_PASSWORD\" > /etc/pgbouncer/userlist.txt
+
+cat > /etc/pgbouncer/pg_hba.conf << EOF
+local  all  all  trust
+host  all  all  127.0.0.1/32  trust
+host  all  all  0.0.0.0/0  md5
+EOF
+
+cat > /etc/pgbouncer/pgbouncer.ini << EOF
+[databases]
+* = host=${PGBOUNCER_UPSTREAM_HOST} port=${PGBOUNCER_UPSTREAM_PORT:-5432}
+
+[pgbouncer]
+listen_addr = *
+listen_port = 5432
+auth_type = hba
+admin_users = "${PGBOUNCER_UPSTREAM_USER}"
+auth_file = /etc/pgbouncer/userlist.txt
+auth_user = "${PGBOUNCER_UPSTREAM_USER}"
+auth_hba_file = /etc/pgbouncer/pg_hba.conf
+auth_query = SELECT * FROM public.pgbouncer_lookup_user(\$1, '${PGBOUNCER_UPSTREAM_USER}');
+
+server_tls_sslmode = prefer
+client_tls_sslmode = verify-full
+client_tls_key_file = /etc/pgbouncer/certificate.key
+client_tls_cert_file = /etc/pgbouncer/certificate.cert
+
+pool_mode = ${PGBOUNCER_POOL_MODE:-transaction}
+server_reset_query = ${PGBOUNCER_SERVER_RESET_QUERY:-DEALLOCATE ALL}
+max_client_conn = ${PGBOUNCER_MAX_CLIENT_CONN:-1000}
+max_user_connections = ${PGBOUNCER_USER_CONNECTIONS:-150}
+default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-1}
+min_pool_size = ${PGBOUNCER_MIN_POOL_SIZE:-0}
+reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-1}
+reserve_pool_timeout = ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-5.0}
+server_lifetime = ${PGBOUNCER_SERVER_LIFETIME:-3600}
+server_idle_timeout = ${PGBOUNCER_SERVER_IDLE_TIMEOUT:-600}
+log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
+log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
+log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
+stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
+query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
+tcp_keepidle = 300
+EOF
+/letsencrypt-certificate renew
+
+echo "@daily /letsencrypt-certificate renew" | crontab -
+set +e
+
+crond -f &
+pgbouncer --user=pgbouncer /etc/pgbouncer/pgbouncer.ini &
+
+wait -n
+EXITCODE=$?
+echo Exited using exit code $EXITCODE
+exit $EXITCODE
