@@ -59,7 +59,8 @@ docker push livingdocs/letsencrypt
 
 Use:
 ```sh
-docker run -it --rm livindocs/letsencrypt
+docker run -it --rm livindocs/letsencrypt \
+  -e JWT_SECRET=F8C1FE7E-10EA-4C4A-8CEB-944FC040A98E \
   -e LETSENCRYPT_CERTIFICATES='[{"email":"operations@livingdocs.io", "domains": ["livingdocs.io"]}]' \
   -e AWS_REGION=eu-central-1 \
   -e AWS_PATH_PREFIX=letsencrypt/ \

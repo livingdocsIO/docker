@@ -1,0 +1,15 @@
+{
+  "name": "letsencrypt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marc Bachmann <marc.brookman@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^2.12.0",
+    "fastify-jwt": "^1.2.1"
+  }
+}

@@ -2,4 +2,9 @@
 set -e
 echo "@daily /letsencrypt" | crontab -
 /letsencrypt
-exec crond -f
+
+crond -f &
+node /app/index.js &
+wait -n
+kill $(jobs -p) 2>/dev/null || true
+exit 1
