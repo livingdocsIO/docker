@@ -14,6 +14,7 @@ RUN apk add --no-cache curl git tini nano bash jq sed && \
     mkdir -p /root/.docker && echo '{"experimental": "enabled"}' > /root/.docker/config.json && \
     chmod a+x /root/.docker/cli-plugins/docker-buildx
 
+ENV PATH $PATH:./node_modules/.bin
 ENV DOCKER_BUILDKIT 1
 ENV DOCKER_CONFIG /root/.docker/
 ENTRYPOINT [ "/entrypoint" ]
