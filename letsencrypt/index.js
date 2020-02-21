@@ -31,7 +31,7 @@ async function start () {
       try {
         const [key, cert] = await Promise.all([
           `${dir}/${domain}.key`,
-          `${dir}/${domain}.cert`
+          `${dir}/${domain}.crt`
         ].map((p) => fs.readFile(p, 'utf8')))
         return {domain, key, cert}
       } catch (error) {
