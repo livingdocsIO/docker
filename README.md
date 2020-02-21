@@ -19,7 +19,7 @@ The official docker image with node, git and curl
 On Docker Hub: https://hub.docker.com/r/livingdocs/docker-node
 
 ```sh
-docker build -t livingdocs/docker-node:19-12 - < ./docker-node/Dockerfile
+docker build -t livingdocs/docker-node:19-12 -f ./docker-node/Dockerfile ./docker-node
 
 docker push livingdocs/docker-node:19-12
 ```
@@ -27,7 +27,7 @@ docker push livingdocs/docker-node:19-12
 ### livingdocs/postgres-exporter
 
 ```sh
-docker build -t livingdocs/postgres-exporter -f postgres-exporter/Dockerfile ./postgres-exporter
+docker build -t livingdocs/postgres-exporter -f ./postgres-exporter/Dockerfile ./postgres-exporter
 
 docker push livingdocs/postgres-exporter
 ```
