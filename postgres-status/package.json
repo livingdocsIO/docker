@@ -1,0 +1,12 @@
+{
+  "name": "postgres-status",
+  "version": "1.0.0",
+  "description": "`postgres-status` is an http server, that serves a healthcheck endpoint for postgres that can be used in a loadbalancer to run queries against a specific postgres instance, be it a primary or replica.",
+  "keywords": ["postgres", "healthcheck"],
+  "author": "Marc Bachmann <marc.brookman@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^2.13.0",
+    "pg": "^8.0.0"
+  }
+}
