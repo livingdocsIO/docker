@@ -23,6 +23,7 @@ DEFAULT_AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
 DEFAULT_AWS_PATH_PREFIX="${AWS_PATH_PREFIX:-letsencrypt/}"
 DEFAULT_LETSENCRYPT_DIR="${LETSENCRYPT_DIR:-/etc/letsencrypt}"
 DEFAULT_LETSENCRYPT_CERTIFICATES="${LETSENCRYPT_CERTIFICATES:-[]}"
+DEFAULT_LETSENCRYPT_EXPIRATION_DAYS=11
 
 function setdefaults () {
   export AWS_REGION="$DEFAULT_AWS_REGION"
@@ -46,8 +47,9 @@ function createcert () {
   local awsRegion="$(jq -r '.region // empty' <<< "$row")"
   local awsAccessKeyID="$(jq -r '.accessKeyID // empty' <<< "$row")"
   local awsSecretAccessKey="$(jq -r '.secretAccessKey // empty' <<< "$row")"
-
   export AWS_HOSTED_ZONE_ID="$(jq -r '.hostedZoneID // empty' <<< "$row")"
+  export DAYS="$(jq -r ".days // $DEFAULT_LETSENCRYPT_EXPIRATION_DAYS | if . == \"\" then $DEFAULT_LETSENCRYPT_EXPIRATION_DAYS else . end | tonumber | if . < 0 then 0 else . end" <<< "$row")"
+
   export AWS_REGION="${awsRegion:-$DEFAULT_AWS_REGION}"
   export AWS_ACCESS_KEY_ID="${awsAccessKeyID:-$DEFAULT_AWS_ACCESS_KEY_ID}"
   export AWS_SECRET_ACCESS_KEY="${awsSecretAccessKey:-$DEFAULT_AWS_SECRET_ACCESS_KEY}"
@@ -60,15 +62,15 @@ function createcert () {
     log "Skip 'lego $domains renew' for disabled domain"
   elif test -f "$LETSENCRYPT_DIR/certificates/$(tr '*' '_' <<< "$domain").json"; then
     log "Generate certificate using 'lego $domains renew'."
-    if [ "$(jq -r '.challenge // "" | ascii_downcase" <<< "$row")' == "http" ]; then
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http=:80 --tls=:443 -x "tls-sni-01" -m $email $(echo $domains) renew
+    if [ "$(jq -r '.challenge // "" | ascii_downcase' <<< "$row")" == "http" ]; then
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http -m $email $(echo $domains) renew --days=$DAYS
     else
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) renew
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) renew --days=$DAYS
     fi
   else
     log "Generate certificate using 'lego $domains run'."
-    if [ "$(jq -r '.challenge // "" | ascii_downcase" <<< "$row")' == "http" ]; then
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http=:80 -m $email $(echo $domains) run
+    if [ "$(jq -r '.challenge // "" | ascii_downcase' <<< "$row")" == "http" ]; then
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http -m $email $(echo $domains) run
     else
       lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) run
     fi
