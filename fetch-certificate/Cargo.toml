@@ -1,0 +1,11 @@
+[package]
+name = "fetch-certificate"
+version = "0.1.0"
+authors = ["Marc Bachmann <marc.brookman@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+reqwest = { version = "0.10.4", features = ["blocking", "json"] }
+serde = { version = "1.0.105" }
+serde_derive = { version = "1.0.105" }
+clap = { git = "https://github.com/clap-rs/clap/", default-features = false, features = [ "derive", "std", "suggestions" ] }
