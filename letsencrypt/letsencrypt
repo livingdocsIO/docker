@@ -24,6 +24,7 @@ DEFAULT_AWS_PATH_PREFIX="${AWS_PATH_PREFIX:-letsencrypt/}"
 DEFAULT_LETSENCRYPT_DIR="${LETSENCRYPT_DIR:-/etc/letsencrypt}"
 DEFAULT_LETSENCRYPT_CERTIFICATES="${LETSENCRYPT_CERTIFICATES:-[]}"
 DEFAULT_LETSENCRYPT_EXPIRATION_DAYS=11
+DEFAULT_LETSENCRYPT_WEBROOT=$(node -p 'path.resolve(process.env.LETSENCRYPT_WEBROOT || "./well-known-acme-challenge")')
 
 function setdefaults () {
   export AWS_REGION="$DEFAULT_AWS_REGION"
@@ -63,16 +64,16 @@ function createcert () {
   elif test -f "$LETSENCRYPT_DIR/certificates/$(tr '*' '_' <<< "$domain").json"; then
     log "Generate certificate using 'lego $domains renew'."
     if [ "$(jq -r '.challenge // "" | ascii_downcase' <<< "$row")" == "http" ]; then
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http -m $email $(echo $domains) renew --days=$DAYS
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http --http.webroot="$DEFAULT_LETSENCRYPT_WEBROOT" --email $email $(echo $domains) renew --days=$DAYS
     else
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) renew --days=$DAYS
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' --email $email $(echo $domains) renew --days=$DAYS
     fi
   else
     log "Generate certificate using 'lego $domains run'."
     if [ "$(jq -r '.challenge // "" | ascii_downcase' <<< "$row")" == "http" ]; then
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http -m $email $(echo $domains) run
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http --http.webroot="$DEFAULT_LETSENCRYPT_WEBROOT" --email $email $(echo $domains) run
     else
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' -m $email $(echo $domains) run
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' --email $email $(echo $domains) run
     fi
   fi
 }

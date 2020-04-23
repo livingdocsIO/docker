@@ -6,12 +6,24 @@ const FastifyJWT = require('fastify-jwt')
 async function start () {
   const fastify = Fastify({logger: {level: 'info'}})
 
-  const secret = process.env.JWT_SECRET || [Math.random() * 1e16, Math.random() * 1e16].map((v) => v.toString(32)).join('') // eslint-disable-line
+  const letsencryptDir = process.env.LETSENCRYPT_DIR || '/etc/letsencrypt'
+  const letsencryptCertificatesDir = path.join(letsencryptDir, 'certificates')
+
+  const letsencryptWebRoot = path.resolve(process.env.LETSENCRYPT_WEBROOT || './well-known-acme-challenge')
+  await fs.mkdir(letsencryptWebRoot).catch((err) => {
+    if (err.code !== 'EEXIST') throw err
+  })
+
+  const jwtSecret = process.env.JWT_SECRET || [Math.random() * 1e16, Math.random() * 1e16].map((v) => v.toString(32)).join('') // eslint-disable-line
   if (!process.env.JWT_SECRET) fastify.log.warn('Please configure the environment variable JWT_SECRET to support http requests.') // eslint-disable-line
 
-  fastify.register(FastifyJWT, {secret})
+  fastify.register(require('fastify-static'), {
+    root: letsencryptWebRoot,
+    prefix: '/.well-known/acme-challenge/'
+  })
 
-  fastify.addHook('onRequest', async (req, rep) => {
+  fastify.register(FastifyJWT, {secret: jwtSecret})
+  const tokenVerificationHandler = async (req, rep) => {
     try {
       req.token = await req.jwtVerify()
     } catch (err) {
@@ -21,27 +33,37 @@ async function start () {
         message: 'Invalid Credentials'
       })
     }
+  }
+
+  async function getDomainByName (domainName) {
+    const domain = domainName.replace('*', '_')
+    try {
+      const [key, cert] = await Promise.all([
+        fs.readFile(`${letsencryptCertificatesDir}/${domain}.key`, 'utf8'),
+        fs.readFile(`${letsencryptCertificatesDir}/${domain}.crt`, 'utf8')
+      ])
+      return {domain, key, cert}
+    } catch (error) {
+      throw new Err(404, `Domain '${domainName}' not Found`)
+    }
+  }
+
+  fastify.get('/list', {
+    onRequest: tokenVerificationHandler,
+    async handler (req, reply) {
+      return Promise.all(req.token.domains.map(getDomainByName))
+    }
   })
 
-  const letsencryptDir = process.env.LETSENCRYPT_DIR || '/etc/letsencrypt'
-  const dir = path.join(letsencryptDir, 'certificates')
-  fastify.get('/list', async (req, reply) => {
-    const certs = await Promise.all([...req.token.domains].map(async (domainName) => {
-      const domain = domainName.replace('*', '_')
-      try {
-        const [key, cert] = await Promise.all([
-          `${dir}/${domain}.key`,
-          `${dir}/${domain}.crt`
-        ].map((p) => fs.readFile(p, 'utf8')))
-        return {domain, key, cert}
-      } catch (error) {
-        reply.status(500)
-        return {domain, error: "Not Found"}
-      }
-    }))
+  function Err (statusCode, message) {
+    this.name = this.constructor.name
+    this.message = message
+    this.statusCode = statusCode
+    Error.call(this, message)
+    Error.captureStackTrace(this, this.constructor)
+  }
 
-    return certs.filter(Boolean)
-  })
+  require('util').inherits(Err, Error)
 
   await fastify.ready()
 
