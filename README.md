@@ -7,8 +7,9 @@ This repo is set up to use automated builds on docker hub.
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker build -t livingdocs/node:12.0 - < Dockerfile.node
+docker build -t livingdocs/node:12.0 -t livingdocs/node:12 - < Dockerfile.node
 
+docker push livingdocs/node:12
 docker push livingdocs/node:12.0
 ```
 
@@ -20,7 +21,6 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/docker-node
 
 ```sh
 docker build -t livingdocs/docker-node:19-12 -f ./docker-node/Dockerfile ./docker-node
-
 docker push livingdocs/docker-node:19-12
 ```
 
@@ -28,8 +28,27 @@ docker push livingdocs/docker-node:19-12
 
 ```sh
 docker build -t livingdocs/postgres-exporter -f ./postgres-exporter/Dockerfile ./postgres-exporter
-
 docker push livingdocs/postgres-exporter
+```
+
+### livingdocs/odyssey
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/odyssey
+
+Build:
+```sh
+docker build -t livingdocs/odyssey:1.1 - < Dockerfile.odyssey
+docker push livingdocs/odyssey:1.1
+```
+
+### livingdocs/pgbouncer
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/pgbouncer
+
+Build:
+```sh
+docker build -t livingdocs/pgbouncer -f ./pgbouncer/Dockerfile ./pgbouncer
+docker push livingdocs/pgbouncer
 ```
 
 ### livingdocs/certbot-route53-postgres
