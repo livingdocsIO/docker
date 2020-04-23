@@ -13,6 +13,15 @@ docker push livingdocs/node:12
 docker push livingdocs/node:12.0
 ```
 
+### livingdocs/server-base
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
+
+```sh
+docker build -f ./livingdocs-server-base/Dockerfile -t livingdocs/server-base:12.1 ./livingdocs-server-base
+docker push livingdocs/server-base:12.1
+```
+
 ### livingdocs/docker-node
 
 The official docker image with node, git and curl

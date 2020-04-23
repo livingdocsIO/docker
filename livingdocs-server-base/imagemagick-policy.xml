@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policymap [
+  <!ELEMENT policymap (policy)+>
+  <!ATTLIST policymap xmlns CDATA #FIXED ''>
+  <!ELEMENT policy EMPTY>
+  <!ATTLIST policy xmlns CDATA #FIXED '' domain NMTOKEN #REQUIRED
+    name NMTOKEN #IMPLIED pattern CDATA #IMPLIED rights NMTOKEN #IMPLIED
+    stealth NMTOKEN #IMPLIED value CDATA #IMPLIED>
+]>
+<policymap>
+  <policy domain="resource" name="temporary-path" value="/tmp"/>
+  <policy domain="resource" name="width" value="20KP"/>
+  <policy domain="resource" name="height" value="20KP"/>
+  <policy domain="resource" name="area" value="100MP"/>
+  <policy domain="resource" name="time" value="180"/>
+  <policy domain="path" rights="none" pattern="@*"/>
+  <policy domain="coder" rights="none" pattern="*"/>
+  <policy domain="coder" rights="read | write" pattern="{TIFF,GIF,BMP,JPEG,PNG,WEBP,PDF,EPS,SVG,MVG}"/>
+  <policy domain="filter" rights="none" pattern="*" />
+  <policy domain="delegate" rights="none" pattern="HTTPS" />
+  <policy domain="module" rights="none" pattern="{PS,PDF,XPS}"/>
+</policymap>

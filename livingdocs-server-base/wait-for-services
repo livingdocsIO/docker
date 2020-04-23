@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# This file is used in several repositories for the CI test pipelines
+# - livingdocs-server
+# - livingdocs-editor
+set -e
+TIMEOUT=$((TIMEOUT))
+if [ "$TIMEOUT" == "" ] || [ "$TIMEOUT" == "0" ]; then TIMEOUT=300; fi
+
+function after () {
+  local REMAINING=$1
+  echo "after $((TIMEOUT - REMAINING))s"
+}
+
+function wait_for_service () {
+  local HOST="$1"
+  local PORT="$2"
+  local MESSAGE="$3"
+  local REMAINING=$TIMEOUT
+  >&2 printf "wait-for-services: Waiting for TCP connection to $HOST:$PORT..."
+  until nc -zw 1 $HOST $PORT 2>/dev/null
+  do
+    if [ "$REMAINING" -lt 1 ]; then
+      >&2 printf "TIMEOUT $(after $REMAINING)\n"
+      >&2 echo "wait-for-services: Connection to $HOST:$PORT failed"
+      exit 1
+    fi
+    sleep 1
+    >&2 printf .
+    REMAINING=$((REMAINING - 1))
+  done
+
+  >&2 printf "OK $(after $REMAINING)\n"
+}
+
+>&2 echo "wait-for-services: Test connectivity for ${TIMEOUT}s"
+wait_for_service redis 6379
+wait_for_service postgres 5432
+wait_for_service elasticsearch 9200
+>&2 echo "wait-for-services: All connections successful"
+exec "$@"
+
