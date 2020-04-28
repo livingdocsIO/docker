@@ -32,18 +32,18 @@ steps:
     - name: dockersocket
       path: /var/run/docker.sock
   settings:
-    whenChanged: Dockerfile.certbot-route53-postgres
-    dockerfile: Dockerfile.certbot-route53-postgres
+    whenChanged: certbot-route53-postgres.Dockerfile
+    dockerfile: certbot-route53-postgres.Dockerfile
     repo: livingdocs/certbot-route53-postgres
 
-- name: node
+- name: node-12
   image: livingdocs/docker-node
   volumes:
     - name: dockersocket
       path: /var/run/docker.sock
   settings:
-    whenChanged: Dockerfile.node
-    dockerfile: Dockerfile.node
+    whenChanged: node-12.Dockerfile
+    dockerfile: node-12.Dockerfile
     repo: livingdocs/node
 
 volumes:

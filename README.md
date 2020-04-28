@@ -46,7 +46,7 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/odyssey
 
 Build:
 ```sh
-docker build -t livingdocs/odyssey:1.1 - < Dockerfile.odyssey
+docker build -t livingdocs/odyssey:1.1 - < odyssey.Dockerfile
 docker push livingdocs/odyssey:1.1
 ```
 
@@ -66,7 +66,7 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/certbot-route53-postgres
 
 Build:
 ```sh
-docker build -t livingdocs/certbot-route53-postgres - < Dockerfile.certbot-route53-postgres
+docker build -t livingdocs/certbot-route53-postgres - < certbot-route53-postgres.Dockerfile
 
 docker push livingdocs/certbot-route53-postgres
 ```
