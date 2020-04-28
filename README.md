@@ -18,8 +18,8 @@ docker push livingdocs/node:14.0
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-docker build -f ./livingdocs-server-base/Dockerfile -t livingdocs/server-base:12.1 ./livingdocs-server-base
-docker push livingdocs/server-base:12.1
+docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base:14.0 ./livingdocs-server-base
+docker push livingdocs/server-base:14.0
 ```
 
 ### livingdocs/docker-node
