@@ -46,6 +46,37 @@ steps:
     dockerfile: node-12.Dockerfile
     repo: livingdocs/node
 
+- name: node-14
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: node-14.Dockerfile
+    dockerfile: node-14.Dockerfile
+    repo: livingdocs/node
+
+- name: odyssey
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: odyssey.Dockerfile
+    dockerfile: odyssey.Dockerfile
+    repo: livingdocs/odyssey
+
+- name: blackbox-exporter
+  image: livingdocs/docker-node
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  settings:
+    whenChanged: ^blackbox-exporter/
+    context: ./blackbox-exporter
+    dockerfile: ./blackbox-exporter/Dockerfile
+    repo: livingdocs/blackbox-exporter
+
 volumes:
 - name: dockersocket
   host:
@@ -55,6 +86,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: 9571ef94cda179423d7913185aca608cc6e863c26441bad9e93a8f3f23dd166a
+hmac: cb559a1b770025b9ed3baea6108ba55daee15f868d3db3adad71fb3cea5c727a
 
 ...

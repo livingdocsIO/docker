@@ -7,10 +7,10 @@ This repo is set up to use automated builds on docker hub.
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker build -t livingdocs/node:12.0 -t livingdocs/node:12 - < Dockerfile.node
+docker build -t livingdocs/node:14.0 -t livingdocs/node:14 - < node-14.Dockerfile
 
-docker push livingdocs/node:12
-docker push livingdocs/node:12.0
+docker push livingdocs/node:14
+docker push livingdocs/node:14.0
 ```
 
 ### livingdocs/server-base
