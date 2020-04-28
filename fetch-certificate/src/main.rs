@@ -19,7 +19,7 @@ struct Opts {
   #[clap(long, default_value = "<file>.key", help = "Customize the key file output path.")]
   key_file: String,
 
-  #[clap(long = "url", default_value = "https://certificates.production.livingdocs.io", help = "A server to fetch certificates from")]
+  #[clap(long = "url", help = "A server to fetch certificates from")]
   url: String,
 
   #[clap(env, long, help = "The bearer token to use for the server request.")]
