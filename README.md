@@ -22,6 +22,17 @@ docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base
 docker push livingdocs/server-base:14.0
 ```
 
+### livingdocs/editor-base
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
+
+```sh
+docker build -t livingdocs/editor-base:14.0 - < ./livingdocs-editor-base/14.Dockerfile
+docker build -t livingdocs/editor-base:12.0 - < ./livingdocs-editor-base/12.Dockerfile
+docker push livingdocs/editor-base:14.0
+docker push livingdocs/editor-base:12.0
+```
+
 ### livingdocs/docker-node
 
 The official docker image with node, git and curl
