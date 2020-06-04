@@ -1,6 +1,5 @@
-# tag: livingdocs/server-base:14.0
 # Usage:
-#   FROM livingdocs/server-base:14.0
+#   FROM livingdocs/server-base:14
 #   ADD .npmrc package*.json /app/
 #   RUN npm ci
 #   ADD . /app

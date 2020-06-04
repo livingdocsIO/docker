@@ -22,11 +22,11 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
 docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base:14.1 -t livingdocs/server-base:14 ./livingdocs-server-base
-docker build -f ./livingdocs-server-base/12.Dockerfile -t livingdocs/server-base:12.1 -t livingdocs/server-base:12 ./livingdocs-server-base
+docker build -f ./livingdocs-server-base/12.Dockerfile -t livingdocs/server-base:12.3 -t livingdocs/server-base:12 ./livingdocs-server-base
 docker push livingdocs/server-base:14
 docker push livingdocs/server-base:14.1
 docker push livingdocs/server-base:12
-docker push livingdocs/server-base:12.1
+docker push livingdocs/server-base:12.3
 ```
 
 ### livingdocs/editor-base
