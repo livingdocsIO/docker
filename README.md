@@ -7,10 +7,13 @@ This repo is set up to use automated builds on docker hub.
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker build -t livingdocs/node:14.0 -t livingdocs/node:14 - < node-14.Dockerfile
+docker build -t livingdocs/node:14.1 -t livingdocs/node:14 - < node-14.Dockerfile
+docker build -t livingdocs/node:12.1 -t livingdocs/node:12 - < node-12.Dockerfile
 
 docker push livingdocs/node:14
-docker push livingdocs/node:14.0
+docker push livingdocs/node:14.1
+docker push livingdocs/node:12
+docker push livingdocs/node:12.1
 ```
 
 ### livingdocs/server-base
@@ -18,8 +21,12 @@ docker push livingdocs/node:14.0
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base:14.0 ./livingdocs-server-base
-docker push livingdocs/server-base:14.0
+docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base:14.1 -t livingdocs/server-base:14 ./livingdocs-server-base
+docker build -f ./livingdocs-server-base/12.Dockerfile -t livingdocs/server-base:12.1 -t livingdocs/server-base:12 ./livingdocs-server-base
+docker push livingdocs/server-base:14
+docker push livingdocs/server-base:14.1
+docker push livingdocs/server-base:12
+docker push livingdocs/server-base:12.1
 ```
 
 ### livingdocs/editor-base
@@ -27,10 +34,12 @@ docker push livingdocs/server-base:14.0
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-docker build -t livingdocs/editor-base:14.0 - < ./livingdocs-editor-base/14.Dockerfile
-docker build -t livingdocs/editor-base:12.0 - < ./livingdocs-editor-base/12.Dockerfile
-docker push livingdocs/editor-base:14.0
-docker push livingdocs/editor-base:12.0
+docker build -t livingdocs/editor-base:14.1 -t livingdocs/editor-base:14 - < ./livingdocs-editor-base/14.Dockerfile
+docker build -t livingdocs/editor-base:12.1 -t livingdocs/editor-base:12 - < ./livingdocs-editor-base/12.Dockerfile
+docker push livingdocs/editor-base:14
+docker push livingdocs/editor-base:14.1
+docker push livingdocs/editor-base:12
+docker push livingdocs/editor-base:12.1
 ```
 
 ### livingdocs/docker-node

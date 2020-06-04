@@ -4,7 +4,7 @@
 #   ADD .npmrc package*.json /app/
 #   RUN npm ci
 #   ADD . /app
-FROM livingdocs/node:12.0
+FROM livingdocs/node:12
 RUN apk add --no-cache imagemagick && \
   apk add --no-cache --virtual build-deps python alpine-sdk autoconf libtool automake && \
   mkdir -p /prebuilds && cd /prebuilds && npm init -y && npm install sodium-native@3.1.1 && \
