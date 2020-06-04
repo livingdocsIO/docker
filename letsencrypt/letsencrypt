@@ -55,25 +55,23 @@ function createcert () {
   export AWS_ACCESS_KEY_ID="${awsAccessKeyID:-$DEFAULT_AWS_ACCESS_KEY_ID}"
   export AWS_SECRET_ACCESS_KEY="${awsSecretAccessKey:-$DEFAULT_AWS_SECRET_ACCESS_KEY}"
   if [ "$AWS_HOSTED_ZONE_ID" == "" ]; then unset AWS_HOSTED_ZONE_ID; fi
-  [[ "$AWS_REGION" == "" ]] && fatal "The json property 'region' is mandatory. It wasn't defined."
-  [[ "$AWS_ACCESS_KEY_ID" == "" ]] && fatal "The json property 'accessKeyID' is mandatory. It wasn't defined."
-  [[ "$AWS_SECRET_ACCESS_KEY" == "" ]] && fatal "The json property 'secretAccessKey' is mandatory. It wasn't defined."
 
+  local challenge=$(jq -r '.challenge // "route53" | ascii_downcase' <<< "$row")
   if [ "$(jq -r '.enabled' <<< "$row")" == "false" ]; then
     log "Skip 'lego $domains renew' for disabled domain"
   elif test -f "$LETSENCRYPT_DIR/certificates/$(tr '*' '_' <<< "$domain").json"; then
     log "Generate certificate using 'lego $domains renew'."
-    if [ "$(jq -r '.challenge // "" | ascii_downcase' <<< "$row")" == "http" ]; then
+    if [ "$challenge" == "http" ]; then
       lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http --http.webroot="$DEFAULT_LETSENCRYPT_WEBROOT" --email $email $(echo $domains) renew --days=$DAYS
     else
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' --email $email $(echo $domains) renew --days=$DAYS
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns="$challenge" --email $email $(echo $domains) renew --days=$DAYS
     fi
   else
     log "Generate certificate using 'lego $domains run'."
-    if [ "$(jq -r '.challenge // "" | ascii_downcase' <<< "$row")" == "http" ]; then
+    if [ "$challenge" == "http" ]; then
       lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --http --http.webroot="$DEFAULT_LETSENCRYPT_WEBROOT" --email $email $(echo $domains) run
     else
-      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns='route53' --email $email $(echo $domains) run
+      lego -a --key-type=rsa2048 --path $LETSENCRYPT_DIR --dns="$challenge" --email $email $(echo $domains) run
     fi
   fi
 }

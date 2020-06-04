@@ -100,9 +100,8 @@ Certificates are pushed to an s3 bucket, so they can be fetched from other scrip
 
 Build:
 ```sh
-cd letsencrypt
-docker build -t livingdocs/letsencrypt .
-docker push livingdocs/letsencrypt
+docker build -t livingdocs/letsencrypt:1.1 -f ./letsencrypt/Dockerfile ./letsencrypt
+docker push livingdocs/letsencrypt:1.1
 ```
 
 Use:
