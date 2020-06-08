@@ -119,11 +119,9 @@ docker run -it --rm livindocs/letsencrypt \
 ### livingdocs/elasticsearch
 
 ```sh
-docker build --rm -t livingdocs/elasticsearch:6.8.5 - <<EOF
-FROM docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.5
-EOF
-
-docker push livingdocs/elasticsearch:6.8.5
+docker pull docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10
+docker tag docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10 livingdocs/elasticsearch:6.8.10
+docker push livingdocs/elasticsearch:6.8.10
 ```
 
 ## Some other useful setups
