@@ -118,10 +118,18 @@ docker run -it --rm livindocs/letsencrypt \
 
 ### livingdocs/elasticsearch
 
+Build:
 ```sh
 docker pull docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10
-docker tag docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10 livingdocs/elasticsearch:6.8.10
+docker pull docker.elastic.co/elasticsearch/elasticsearch-oss:7.8.0
+docker tag docker.elastic.co/elasticsearch/elasticsearch-oss:7.8.0 livingdocs/elasticsearch:7.8.0
 docker push livingdocs/elasticsearch:6.8.10
+docker push livingdocs/elasticsearch:7.8.0
+```
+
+Use:
+```sh
+docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:7.8.0
 ```
 
 ## Some other useful setups
