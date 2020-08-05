@@ -6,7 +6,7 @@
   "author": "Marc Bachmann <marc.brookman@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "fastify": "^2.13.0",
+    "fastify": "^2.15.1",
     "pg": "^8.0.0"
   }
 }
