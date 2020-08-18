@@ -10,19 +10,19 @@ use std::io::{Write};
 #[derive(Clap)]
 #[clap(name = "fetch-certificate", version = "1.0", author = "Marc Bachmann <marc@livingdocs.io>", about = "A small tool to fetch a certificate from a certificate server.")]
 struct Opts {
-  #[clap(default_value = "<domain>", required = true, help = "Customize the key and cert file output path.")]
+  #[clap(default_value = "<domain>", env = "FETCH_CERTIFICATE_FILE", required = true, help = "Customize the key and cert file output path.")]
   file: String,
 
-  #[clap(long, default_value = "<file>.cert", help = "Customize the cert file output path.")]
+  #[clap(long, default_value = "<file>.cert", env = "FETCH_CERTIFICATE_CERT_FILE", help = "Customize the cert file output path.")]
   cert_file: String,
 
-  #[clap(long, default_value = "<file>.key", help = "Customize the key file output path.")]
+  #[clap(long, default_value = "<file>.key", env = "FETCH_CERTIFICATE_KEY_FILE", help = "Customize the key file output path.")]
   key_file: String,
 
-  #[clap(long = "url", help = "A server to fetch certificates from")]
+  #[clap(long = "url", env = "FETCH_CERTIFICATE_URL", help = "A server to fetch certificates from")]
   url: String,
 
-  #[clap(env, long, help = "The bearer token to use for the server request.")]
+  #[clap(env = "FETCH_CERTIFICATE_TOKEN", long, help = "The bearer token to use for the server request.")]
   token: String
 }
 

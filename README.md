@@ -104,16 +104,21 @@ docker build -t livingdocs/letsencrypt:1.1 -f ./letsencrypt/Dockerfile ./letsenc
 docker push livingdocs/letsencrypt:1.1
 ```
 
+### livingdocs/fetch-certificate
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/fetch-certificate
+
+Works together with livingdocs/letsencrypt to download a certificate into a file.
+It's just doing an http request and writing two files. Basically a simple curl command could
+do the same thing, but I just wanted to test rust for something.
+
 Use:
 ```sh
-docker run -it --rm livindocs/letsencrypt \
-  -e JWT_SECRET=F8C1FE7E-10EA-4C4A-8CEB-944FC040A98E \
-  -e LETSENCRYPT_CERTIFICATES='[{"email":"operations@livingdocs.io", "domains": ["livingdocs.io"]}]' \
-  -e AWS_REGION=eu-central-1 \
-  -e AWS_PATH_PREFIX=letsencrypt/ \
-  -e AWS_BUCKET=livingdocs \
-  -e AWS_ACCESS_KEY_ID=some-aws-access-key \
-  -e AWS_SECRET_ACCESS_KEY=some-aws-secret-key
+docker run -it --rm \
+  -e FETCH_CERTIFICATE_TOKEN="JWT.GF...SD.SJQ" \
+  -e FETCH_CERTIFICATE_URL='https://letsencrypt.livingdocs.io' \
+  -e FETCH_CERTIFICATE_FILE='/etc/certificates/postgres.livingdocs.io' \
+  livingdocs/fetch-certificate
 ```
 
 ### livingdocs/elasticsearch
