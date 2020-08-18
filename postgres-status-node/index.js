@@ -25,11 +25,13 @@ fastify.register(async () => {
   })
 
   async function refreshState () {
-    const {rows: replicaRows} = await pool.query(`SELECT pg_is_in_recovery()`)
-    const replica = replicaRows[0].pg_is_in_recovery
+    const [replicaQuery, readonlyQuery] = await pool.query(`
+      SELECT pg_is_in_recovery();
+      SHOW transaction_read_only;
+    `)
 
-    const {rows: readonlyRows} = await pool.query(`SHOW transaction_read_only`)
-    const readonly = truthy.has(readonlyRows[0].transaction_read_only)
+    const replica = replicaQuery.rows[0].pg_is_in_recovery
+    const readonly = truthy.has(readonlyQuery.rows[0].transaction_read_only)
     return {statusCode: 200, primary: !replica, replica, readonly}
   }
 
@@ -53,7 +55,7 @@ fastify.register(async () => {
         properties: {
           target_session_attrs: {
             enum: ['any', 'read-write', 'read-only'],
-            default: 'any'
+            default: 'read-write'
           }
         }
       },
