@@ -1,7 +1,7 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/pgxpool"
 )
 
 const stateQuery = `
@@ -31,7 +31,7 @@ func main() {
 	os.Setenv("PGSSLMODE", "disable")
 	var PORT = getEnv("PORT", "2345")
 	var DATABASE = getEnv("DATABASE_URL", "")
-	db, err := sql.Open("postgres", DATABASE)
+	db, err := pgxpool.Connect(context.Background(), DATABASE)
 	if err != nil {
 		log.Fatal("Failed to connect to postgres: ", err)
 	}
@@ -43,7 +43,7 @@ func main() {
 		var replica bool
 		var readonly bool
 		var status int
-		err = db.QueryRow(stateQuery).Scan(&replica, &readonly)
+		err = db.QueryRow(context.Background(), stateQuery).Scan(&replica, &readonly)
 		if err != nil {
 			status = 503
 			w.WriteHeader(status)
