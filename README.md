@@ -137,6 +137,29 @@ Use:
 docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:7.8.0
 ```
 
+### livingdocs/file-change-hook
+
+On Docker Hub: https://hub.docker.com/r/livingdocs/file-change-hook
+
+A small service that can be deployed as sidecar that watches files and triggers
+a script when they change. This can be used for example to trigger a config reload in a service
+upon a ConfigMap change in kubernetes.
+
+The image has some dependencies pre-installed: `bash`, `curl`, `dig`, `jq`
+
+Build:
+```sh
+docker build -t livingdocs/file-change-hook:1.0 -f ./file-change-hook/Dockerfile ./file-change-hook
+docker push livingdocs/file-change-hook:1.0
+```
+
+Use:
+```sh
+Usage: file-change-hook <command> <file-or-directory> [<another-file-or-directory>...]
+
+docker run -v $PWD:/data livingdocs/file-change-hook:1.0 "echo Some file in /data changed" /data
+```
+
 ## Some other useful setups
 
 - Varnish: https://github.com/livingdocsIO/dockerfile-varnish

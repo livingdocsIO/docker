@@ -1,0 +1,42 @@
+#!/bin/bash
+exec 1> >(awk '{print strftime("%Y-%m-%dT%H:%M:%SZ",systime()) " [watch]: " $0;}') 2>&1
+md5sum=$(which -a md5 md5sum | head -n1)
+
+if [ "$1" == "" ]; then
+  echo "Usage: file-change-hook <command> <file> [<another-file>, ...]"
+  exit 1
+fi
+
+interval="${INTERVAL:-10}"
+command="$1"
+files="${@:2}"
+sum=$($md5sum $(find "$files" -type f))
+sumcount="$(echo -e "$sum" | wc -l | tr -d ' ')"
+
+trap "echo Watcher stopped" EXIT
+if [ "$sumcount" == "1" ]; then
+  echo "Watcher started, watching $sumcount file"
+else
+  echo "Watcher started, watching $sumcount files"
+fi
+
+while true; do
+  sleep $interval
+  newsum="$($md5sum $(find "$files" -type f))"
+
+  if [ "$newsum" != "$sum" ]; then
+    echo -e "\nFiles changed:\n----------------\n"
+    diff <(echo -e "$sum") <(echo -e "$newsum") 2>&1 | awk '{print "  > " $0;}'
+
+    echo -e "\nExecute command:\n----------------\n"
+    /bin/bash -c "$command" 2>&1 | awk '{print "  > " $0;}'
+
+    exitcode="${PIPESTATUS[0]}"
+    if [ "$exitcode" != "0" ]; then
+      echo -e "\n----------------\nCommand failed. Exit code $exitcode\n";
+    else
+      echo -e "\n----------------\nCommand suceeded."
+      sum="$newsum";
+    fi
+  fi
+done
