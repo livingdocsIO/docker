@@ -29,7 +29,7 @@ while true; do
     diff <(echo -e "$sum") <(echo -e "$newsum") 2>&1 | awk '{print "  > " $0;}'
 
     echo -e "\nExecute command:\n----------------\n"
-    /bin/bash -c "$command" 2>&1 | awk '{print "  > " $0;}'
+    /bin/bash -s '-e' -c "$command" 2>&1 | awk '{print "  > " $0;}'
 
     exitcode="${PIPESTATUS[0]}"
     if [ "$exitcode" != "0" ]; then
