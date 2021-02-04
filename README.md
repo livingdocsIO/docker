@@ -117,8 +117,8 @@ to get file mounts working that only have root permissions.
 
 Build:
 ```sh
-docker build -t livingdocs/envoy:v1.16.1 -f ./envoy.Dockerfile .
-docker push livingdocs/envoy:v1.16.1
+docker build -t livingdocs/envoy:v1.17.0 -f ./envoy.Dockerfile .
+docker push livingdocs/envoy:v1.17.0
 ```
 
 
