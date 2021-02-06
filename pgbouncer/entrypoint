@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+
+# docker run --name=pgbouncer -d -e PGBOUNCER_UPSTREAM_USER=user_pgbouncer -e PGBOUNCER_UPSTREAM_PASSWORD=md58b9ad77b2409cd985b672a95d652b369 -e PGBOUNCER_UPSTREAM='host=172.17.0.1 port=5432' -p 5433:5432 livingdocs/pgbouncer
 mkdir -p /etc/pgbouncer
 PGBOUNCER_UPSTREAM_USER=${PGBOUNCER_UPSTREAM_USER:-postgres}
 
@@ -22,7 +24,7 @@ EOF
 if [ "$PGBOUNCER_AUTH_QUERY" == "trust" ]; then
   AUTH_QUERY="auth_query = SELECT usename, passwd FROM pg_catalog.pg_shadow WHERE usename = '\$1' AND usename <> '${PGBOUNCER_UPSTREAM_USER}';"
 elif [ "$PGBOUNCER_AUTH_QUERY" == "secure" ]; then
-  AUTH_QUERY="auth_query = SELECT * FROM pooler.pooler_lookup_user(\$1, '${PGBOUNCER_UPSTREAM_USER}');"
+  AUTH_QUERY="auth_query = SELECT * FROM pooler.lookup_user(\$1, '${PGBOUNCER_UPSTREAM_USER}');"
 elif [ "$PGBOUNCER_AUTH_QUERY" != "" ] && [ "$PGBOUNCER_AUTH_QUERY" != "false" ]; then
   AUTH_QUERY="auth_query = ${PGBOUNCER_AUTH_QUERY}"
 fi

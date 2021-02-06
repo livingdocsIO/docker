@@ -1,6 +1,7 @@
+# docker run --rm -p 6543:6543 livingdocs/odyssey:1.2-alpha
 FROM debian:bullseye as builder
-RUN apt update && apt -y install curl gnupg2 build-essential cmake git libssl-dev libpam0g-dev postgresql-server-dev-12
-RUN git clone --depth 1 --branch=1.1 https://github.com/yandex/odyssey.git /tmp/odyssey
+RUN apt update && apt -y install curl gnupg2 build-essential cmake git libssl-dev libpam0g-dev postgresql-server-dev-13
+RUN git clone --depth 1 --branch=master https://github.com/yandex/odyssey.git /tmp/odyssey
 WORKDIR /tmp/odyssey/build
 RUN cmake -DCMAKE_BUILD_TYPE=Release ..
 RUN make -j
@@ -18,7 +19,7 @@ RUN apt-get update && \
   adduser --uid 1000 --no-create-home --disabled-password --gecos '' odyssey
 
 COPY --from=builder /tmp/odyssey/build/sources/odyssey /usr/local/bin/odyssey
-COPY --from=builder /tmp/odyssey/odyssey.conf /etc/odyssey/odyssey.conf
+COPY odyssey.conf setup_password_lookup_function.sh /etc/odyssey/
 EXPOSE 6543
 USER odyssey
 CMD ["odyssey", "/etc/odyssey/odyssey.conf"]
