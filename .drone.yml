@@ -62,8 +62,9 @@ steps:
     - name: dockersocket
       path: /var/run/docker.sock
   settings:
-    whenChanged: odyssey.Dockerfile
-    dockerfile: odyssey.Dockerfile
+    whenChanged: ^odyssey/
+    context: ./odyssey
+    dockerfile: odyssey/debian.Dockerfile
     repo: livingdocs/odyssey
 
 - name: blackbox-exporter
@@ -86,6 +87,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: cb559a1b770025b9ed3baea6108ba55daee15f868d3db3adad71fb3cea5c727a
+hmac: 36d1201b450e272bb1ed8a1f9d30a1f60a819ed12c2d0894d6dc4c0a807b0d93
 
 ...

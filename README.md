@@ -69,8 +69,8 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/odyssey
 
 Build:
 ```sh
-docker build -t livingdocs/odyssey:1.1 - < odyssey.Dockerfile
-docker push livingdocs/odyssey:1.1
+docker build -t livingdocs/odyssey:1.2-alpha -f odyssey/debian.Dockerfile ./odyssey
+docker push livingdocs/odyssey:1.2-alpha
 ```
 
 ### livingdocs/pgbouncer
