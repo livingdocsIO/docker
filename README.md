@@ -40,12 +40,12 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
 docker build -t livingdocs/editor-base:15.0 -t livingdocs/editor-base:15 - < ./livingdocs-editor-base/15.Dockerfile
-docker build -t livingdocs/editor-base:14.2 -t livingdocs/editor-base:14 - < ./livingdocs-editor-base/14.Dockerfile
+docker build -t livingdocs/editor-base:14.3 -t livingdocs/editor-base:14 - < ./livingdocs-editor-base/14.Dockerfile
 docker build -t livingdocs/editor-base:12.2 -t livingdocs/editor-base:12 - < ./livingdocs-editor-base/12.Dockerfile
 docker push livingdocs/editor-base:15
 docker push livingdocs/editor-base:15.0
 docker push livingdocs/editor-base:14
-docker push livingdocs/editor-base:14.2
+docker push livingdocs/editor-base:14.3
 docker push livingdocs/editor-base:12
 docker push livingdocs/editor-base:12.2
 ```
@@ -150,12 +150,12 @@ Build:
 ```sh
 docker buildx create --use
 echo 'FROM docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.13' | docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t livingdocs/elasticsearch:6.8.13 --push -
-echo 'FROM docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.1' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.10.1 --push -
+echo 'FROM docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.10.2 --push -
 ```
 
 Use:
 ```sh
-docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:7.10.1
+docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:7.10.2
 ```
 
 ### livingdocs/file-change-hook
