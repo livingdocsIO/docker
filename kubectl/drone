@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -e
+error () { echo -e "$@" 2>&1; }
+
+help () {
+  error "$1
+
+Please declare a configuration like that:
+
+  kind: pipeline
+  name: default
+
+  steps:
+  - name: build
+    image: livingdocs/kubectl
+    settings:
+      config:
+        from_secret: kube_config
+      namespace: ${PLUGIN_NAMESPACE:-examples}
+      deployment: ${PLUGIN_DEPLOYMENT:-example-service}
+      container: ${PLUGIN_CONTAINER:-example-container}
+      image: ${PLUGIN_IMAGE:-livingdocs/example-service:\${DRONE_TAG}}
+
+That will configure kubectl and execute:
+
+  kubectl -n ${PLUGIN_NAMESPACE:-examples} set image deployment/${PLUGIN_DEPLOYMENT:-example-service} ${PLUGIN_CONTAINER:-example-container}=${PLUGIN_IMAGE:-livingdocs/example-service:\${DRONE_TAG}}
+  kubectl -n ${PLUGIN_NAMESPACE:-examples} rollout status -w deployment/${PLUGIN_DEPLOYMENT:-example-service}
+"
+}
+
+if [ -z ${PLUGIN_CONFIG} ]; then
+  help "The kubernetes config is required"
+  exit 1
+fi
+
+if [ -z ${PLUGIN_NAMESPACE} ]; then
+  help "The kubernetes namespace is required"
+  exit 1
+fi
+
+if [ -z ${PLUGIN_DEPLOYMENT} ]; then
+  help "The kubernetes deployment name is required"
+  exit 1
+fi
+
+if [ -z ${PLUGIN_CONTAINER} ]; then
+  help "The container name in the deployment is required"
+  exit 1
+fi
+
+if [ -z ${PLUGIN_IMAGE} ]; then
+  help "The docker image name is required"
+  exit 1
+fi
+
+mkdir -p /root/.kube
+echo "$PLUGIN_CONFIG" > /root/.kube/config
+chmod 600 /root/.kube/config
+
+kubectl -n $PLUGIN_NAMESPACE set image deployment/$PLUGIN_DEPLOYMENT $PLUGIN_CONTAINER=$PLUGIN_IMAGE
+kubectl -n $PLUGIN_NAMESPACE rollout status -w deployment/$PLUGIN_DEPLOYMENT
