@@ -1,0 +1,3 @@
+#!/bin/bash
+docker-login
+exec /usr/local/bin/docker "$@"

@@ -12,4 +12,6 @@ if [ "${PLUGIN_USERNAME:-}" ] || [ "${PLUGIN_PASSWORD:-}" ]; then
   fi
 else
   >&2 echo "No docker credentials provided"
+  >&2 echo "Please provide a DOCKER_USERNAME and DOCKER_PASSWORD environment variables to operate against the registry"
+  exit 1
 fi
