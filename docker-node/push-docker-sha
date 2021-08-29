@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 eval $(docker-image-tags)
 docker push "$SHA_TAG" &
 docker push "$BRANCH_TAG" &

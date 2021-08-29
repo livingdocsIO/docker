@@ -1,6 +1,11 @@
 #!/bin/bash
-PLUGIN_USERNAME="${PLUGIN_USERNAME:-${DOCKER_USERNAME:-}}"
-PLUGIN_PASSWORD="${PLUGIN_PASSWORD:-${DOCKER_PASSWORD:-}}"
+if [ "$PLUGIN_CREDENTIALS" ]; then
+  PLUGIN_USERNAME=$(jq -r '.username' <<< "$PLUGIN_CREDENTIALS")
+  PLUGIN_PASSWORD=$(jq -r '.password' <<< "$PLUGIN_CREDENTIALS")
+else
+  PLUGIN_USERNAME="${PLUGIN_USERNAME:-${DOCKER_USERNAME:-}}"
+  PLUGIN_PASSWORD="${PLUGIN_PASSWORD:-${DOCKER_PASSWORD:-}}"
+fi
 if [ "${PLUGIN_USERNAME:-}" ] || [ "${PLUGIN_PASSWORD:-}" ]; then
   OUTPUT=$(echo "$PLUGIN_PASSWORD" | docker login -u="$PLUGIN_USERNAME" --password-stdin 2>&1)
   if [ "$?" != "0" ]; then

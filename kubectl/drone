@@ -28,27 +28,27 @@ That will configure kubectl and execute:
 "
 }
 
-if [ -z ${PLUGIN_CONFIG} ]; then
+if [ -z "$PLUGIN_CONFIG" ]; then
   help "The kubernetes config is required"
   exit 1
 fi
 
-if [ -z ${PLUGIN_NAMESPACE} ]; then
+if [ -z "$PLUGIN_NAMESPACE" ]; then
   help "The kubernetes namespace is required"
   exit 1
 fi
 
-if [ -z ${PLUGIN_DEPLOYMENT} ]; then
+if [ -z "$PLUGIN_DEPLOYMENT" ]; then
   help "The kubernetes deployment name is required"
   exit 1
 fi
 
-if [ -z ${PLUGIN_CONTAINER} ]; then
+if [ -z "$PLUGIN_CONTAINER" ]; then
   help "The container name in the deployment is required"
   exit 1
 fi
 
-if [ -z ${PLUGIN_IMAGE} ]; then
+if [ -z "$PLUGIN_IMAGE" ]; then
   help "The docker image name is required"
   exit 1
 fi

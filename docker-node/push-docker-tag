@@ -1,5 +1,4 @@
 #!/bin/bash
+set -e
 eval $(docker-image-tags)
-docker pull $SHA_TAG
-docker tag $SHA_TAG $RELEASE_TAG
-docker push $RELEASE_TAG
+exec regctl image cp $SHA_TAG $RELEASE_TAG
