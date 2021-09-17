@@ -1,7 +1,5 @@
 #!/bin/bash
 set -e
 eval $(docker-image-tags)
-docker push "$SHA_TAG" &
-docker push "$BRANCH_TAG" &
-wait -n
-wait -n
+docker push "$SHA_TAG"
+exec regctl image cp $SHA_TAG $BRANCH_TAG
