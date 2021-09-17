@@ -171,6 +171,32 @@ Use:
 docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:7.10.2
 ```
 
+
+### livingdocs/kubectl:3
+
+Kubectl as drone plugin used to upgrade an image of a container in a deployment.
+
+Build:
+```sh
+docker build -t livingdocs/kubectl:3 -f ./kubectl/Dockerfile ./kubectl
+```
+
+Use: .drone.yaml
+```yaml
+steps:
+- name: kubernetes
+  image: livingdocs/kubectl
+  settings:
+    namespace: blue-dev
+    deployment: swisscom-tv-delivery
+    image: "livingdocs/swisscom-tv-delivery:${DRONE_TAG}"
+    container: delivery
+    config:
+      # The whole kubernetes config file content
+      from_secret: kube_config
+```
+
+
 ### livingdocs/file-change-hook
 
 An alternative to https://github.com/weaveworks/watch
