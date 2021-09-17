@@ -173,6 +173,8 @@ docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' li
 
 ### livingdocs/file-change-hook
 
+An alternative to https://github.com/weaveworks/watch
+
 On Docker Hub: https://hub.docker.com/r/livingdocs/file-change-hook
 
 A small service that can be deployed as sidecar that watches files and triggers
