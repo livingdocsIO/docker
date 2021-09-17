@@ -124,6 +124,9 @@ docker push livingdocs/letsencrypt:1.1
 
 ### livingdocs/envoy
 
+Deprecated. Please use the official image.
+This image only exists because there was a need for an image running as root 😅
+
 On Docker Hub: https://hub.docker.com/r/livingdocs/envoy
 
 The envoy docker image with envoy, curl, nano and jq, running as root,
