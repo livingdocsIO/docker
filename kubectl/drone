@@ -57,5 +57,6 @@ mkdir -p /root/.kube
 echo "$PLUGIN_CONFIG" > /root/.kube/config
 chmod 600 /root/.kube/config
 
+echo Deploy namespace=$PLUGIN_NAMESPACE deployment=$PLUGIN_DEPLOYMENT container=$PLUGIN_CONTAINER image=$PLUGIN_IMAGE
 kubectl -n $PLUGIN_NAMESPACE set image deployment/$PLUGIN_DEPLOYMENT $PLUGIN_CONTAINER=$PLUGIN_IMAGE
 kubectl -n $PLUGIN_NAMESPACE rollout status -w deployment/$PLUGIN_DEPLOYMENT
