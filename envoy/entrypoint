@@ -1,0 +1,50 @@
+#!/bin/bash
+# This entrypoint runs envsubst on the config file passed as argument
+# e.g.
+#   envoy -c /etc/envoy/envoy.yaml
+# will run
+#   envsubst /etc/envoy/envoy.yaml | envoy -c /dev/fd/1
+set -euo pipefail
+
+function get_envoy_config {
+  if test -f "/etc/envoy.yaml"; then
+    echo /etc/envoy.yaml
+  elif test -f "/etc/envoy/envoy.yaml"; then
+    echo /etc/envoy/envoy.yaml
+  elif test -f "/etc/envoy/envoy.json"; then
+    echo /etc/envoy/envoy.json
+  elif test -f "/home/envoy/envoy.yaml"; then
+    echo /etc/envoy/envoy.yaml
+  elif test -f "/home/envoy/envoy.json"; then
+    echo /etc/envoy/envoy.json
+  else
+    echo /etc/envoy.yaml
+  fi
+}
+
+FILE=
+if [ $# -eq 0 ]; then set -- "-c" "$(get_envoy_config)"; fi
+if [[ "$1" == -* ]]; then set -- "envoy" "$@"; fi
+if [[ "$1" != "envoy" ]]; then exec "$@"; fi
+
+ARGS=( "$@" )
+for (( i=0; i<${#ARGS[@]}; i++ ));
+do
+  if [[ "${ARGS[$i]}" == "-c" ]] || [[ "${ARGS[$i]}" == "--config-path" ]]; then
+    FILE="${ARGS[$i+1]}"
+    ARGS[$i+1]="/dev/fd/1"
+    i=$((i+1))
+  fi
+done
+
+if [[ "$FILE" != "" ]] && ! test -f "$FILE"; then
+  >&2 echo "Envoy config file not found: $FILE";
+  exit 1;
+fi
+
+set -- "${ARGS[@]}"
+if [[ "$FILE" != "" ]]; then
+  envsubst < "$FILE" | exec "$@"
+else
+  exec "$@"
+fi
