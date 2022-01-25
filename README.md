@@ -148,12 +148,11 @@ docker run -it --rm \
 Build:
 ```sh
 docker buildx create --use
-echo 'FROM docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.13' | docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t livingdocs/elasticsearch:6.8.13 --push -
-echo 'FROM docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.10.2 --push -
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:6.8.21 livingdocs/elasticsearch:6.8.21
 
-# The first image with a regular basic license instead of the oss version
-# This should work as the images above for regular usage
-echo 'FROM docker.elastic.co/elasticsearch/elasticsearch:7.12.1' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.12.1 --push -
+echo 'FROM docker.elastic.co/elasticsearch/elasticsearch:7.16.1' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.16.1 --push -
+# OR
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.16.1 livingdocs/elasticsearch:7.16.1
 ```
 
 Use:
