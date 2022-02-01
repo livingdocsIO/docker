@@ -4,12 +4,8 @@
 #   RUN npm ci
 #   ADD . /app
 FROM livingdocs/node:16
-RUN apk add --no-cache imagemagick && \
-  apk add --no-cache --virtual build-deps python3 alpine-sdk autoconf libtool automake && \
-  mkdir -p /prebuilds && cd /prebuilds && npm init -y && npm install sodium-native@3.1.1 && \
-  apk del build-deps
+RUN apk add --no-cache imagemagick
 
-ENV SODIUM_NATIVE_PREBUILD=/prebuilds/node_modules/sodium-native/
 ADD ./wait-for-services /bin/wait-for-services
 ADD ./imagemagick-policy.xml /etc/ImageMagick-7/policy.livingdocs.xml
 
