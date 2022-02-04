@@ -22,7 +22,8 @@ function get_envoy_config {
   fi
 }
 
-FILE=
+SRC_FILE=
+DST_FILE=
 if [ $# -eq 0 ]; then set -- "-c" "$(get_envoy_config)"; fi
 if [[ "$1" == -* ]]; then set -- "envoy" "$@"; fi
 if [[ "$1" != "envoy" ]]; then exec "$@"; fi
@@ -31,20 +32,25 @@ ARGS=( "$@" )
 for (( i=0; i<${#ARGS[@]}; i++ ));
 do
   if [[ "${ARGS[$i]}" == "-c" ]] || [[ "${ARGS[$i]}" == "--config-path" ]]; then
-    FILE="${ARGS[$i+1]}"
-    ARGS[$i+1]="/dev/fd/1"
+    SRC_FILE="${ARGS[$i+1]}"
+    DST_FILE="/tmp/$(basename "$SRC_FILE")"
+    ARGS[$i+1]="$DST_FILE"
     i=$((i+1))
   fi
 done
 
-if [[ "$FILE" != "" ]] && ! test -f "$FILE"; then
-  >&2 echo "Envoy config file not found: $FILE";
-  exit 1;
+if [[ "$SRC_FILE" != "" ]] && ! test -f "$SRC_FILE"; then
+  >&2 echo "Envoy config file not found: $SRC_FILE"
+  exit 1
 fi
 
 set -- "${ARGS[@]}"
-if [[ "$FILE" != "" ]]; then
-  envsubst < "$FILE" | exec "$@"
+if [[ "$SRC_FILE" != "" ]]; then
+  envsubst < "$SRC_FILE" > "$DST_FILE"
+  >&2 echo "Envoy config file generated: $DST_FILE"
+  >&2 echo "Envoy starting with: $@"
+  exec "$@"
 else
+  >&2 echo "Envoy starting with: $@"
   exec "$@"
 fi

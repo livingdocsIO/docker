@@ -1,4 +1,4 @@
-FROM envoyproxy/envoy-alpine:v1.20.1
+FROM envoyproxy/envoy-alpine:v1.21.0
 ADD ./oidc.wasm /var/local/lib/wasm-filters/oidc.wasm
 ADD ./entrypoint /entrypoint
 RUN rm /etc/envoy/envoy.yaml && \
