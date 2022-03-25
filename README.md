@@ -150,9 +150,11 @@ Build:
 docker buildx create --use
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:6.8.21 livingdocs/elasticsearch:6.8.21
 
-echo 'FROM docker.elastic.co/elasticsearch/elasticsearch:7.16.1' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.16.1 --push -
+echo 'FROM docker.elastic.co/elasticsearch/elasticsearch:7.17.0' | docker buildx build --platform linux/amd64,linux/arm64 -t livingdocs/elasticsearch:7.17.0 --push -
+
 # OR
-regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.16.1 livingdocs/elasticsearch:7.16.1
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.1 livingdocs/elasticsearch:7.17.1
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.1.1 livingdocs/elasticsearch:8.1.1
 ```
 
 Use:
