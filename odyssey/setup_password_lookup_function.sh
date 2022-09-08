@@ -3,9 +3,10 @@ set -e
 
 POOLER_PASSWORD=$(echo $POOLER_PASSWORD | sed 's/\x27/\x27\x27/')
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+psql -v ON_ERROR_STOP=1 -d postgres --username "$POSTGRES_USER" <<-EOSQL
 CREATE USER pooler WITH ENCRYPTED PASSWORD '${POOLER_PASSWORD}';
 CREATE SCHEMA pooler AUTHORIZATION pooler;
+GRANT CONNECT ON DATABASE "postgres" TO pooler;
 
 CREATE OR REPLACE FUNCTION pooler.lookup_user(i_usename TEXT, i_ignoreusename TEXT)
 RETURNS TABLE(username TEXT, password TEXT) AS
