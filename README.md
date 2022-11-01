@@ -25,7 +25,7 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 ```sh
 docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base:14.5 -t livingdocs/server-base:14 ./livingdocs-server-base
 docker build -f ./livingdocs-server-base/16.Dockerfile -t livingdocs/server-base:16.3 -t livingdocs/server-base:16 ./livingdocs-server-base
-docker build -f ./livingdocs-server-base/16.Dockerfile -t livingdocs/server-base:18.1 -t livingdocs/server-base:18 ./livingdocs-server-base
+docker build -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.1 -t livingdocs/server-base:18 ./livingdocs-server-base
 docker push livingdocs/server-base:18
 docker push livingdocs/server-base:18.1
 docker push livingdocs/server-base:16
