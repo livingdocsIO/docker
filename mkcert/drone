@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+set -e
+
+DOMAIN="$DOMAIN"
+if [ "$DOMAIN" == "" ]; then DOMAIN="${PLUGIN_DOMAIN:-localhost}"; fi
+
+DESTINATION="$DESTINATION"
+if [ "$DESTINATION" == "" ]; then DESTINATION="${PLUGIN_DESTINATION:-$PWD}"; fi
+[ ! -d "$DESTINATION" ] && mkdir -p "$DESTINATION"
+cd "$DESTINATION"
+DESTINATION="$PWD"
+
+MKCERT_OUT=$(CAROOT="$DESTINATION" mkcert -install "$DOMAIN" 2>&1 || printf "")
+if [[ "$MKCERT_OUT" != *"You can also manually install"* ]]; then
+  echo -e "$MKCERT_OUT" 2>&1
+  exit 1
+else
+  echo -e "${MKCERT_OUT/rootCA.pem/$DOMAIN.ca.pem}" 2>&1
+fi
+
+echo $DESTINATION
+mv "$DESTINATION/rootCA.pem" $DESTINATION/$DOMAIN.ca.pem
+mv "$DESTINATION/rootCA-key.pem" $DESTINATION/$DOMAIN.ca-key.pem
