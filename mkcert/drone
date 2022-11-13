@@ -1,23 +1,24 @@
-#!/usr/bin/env sh
-set -e
+#!/usr/bin/env bash
+set -eu
 
-DOMAIN="$DOMAIN"
-if [ "$DOMAIN" == "" ]; then DOMAIN="${PLUGIN_DOMAIN:-localhost}"; fi
+DOMAINS=(${DOMAIN:-${PLUGIN_DOMAIN:-localhost}})
+FIRST="${DOMAINS[0]}"
 
-DESTINATION="$DESTINATION"
-if [ "$DESTINATION" == "" ]; then DESTINATION="${PLUGIN_DESTINATION:-$PWD}"; fi
+DESTINATION="${DESTINATION:-${PLUGIN_DESTINATION:-$PWD}}"
 [ ! -d "$DESTINATION" ] && mkdir -p "$DESTINATION"
 cd "$DESTINATION"
 DESTINATION="$PWD"
 
-MKCERT_OUT=$(CAROOT="$DESTINATION" mkcert -install "$DOMAIN" 2>&1 || printf "")
-if [[ "$MKCERT_OUT" != *"You can also manually install"* ]]; then
-  echo -e "$MKCERT_OUT" 2>&1
-  exit 1
-else
-  echo -e "${MKCERT_OUT/rootCA.pem/$DOMAIN.ca.pem}" 2>&1
-fi
+set +e
+MKCERT_OUT=$(CAROOT="$DESTINATION" mkcert -install -key-file "$FIRST.key" -cert-file "$FIRST.cert" $DOMAINS 2>&1)
+if [[ "$?" != "0" ]]; then echo -e "$MKCERT_OUT" 2>&1; exit 1; fi
 
-echo $DESTINATION
-mv "$DESTINATION/rootCA.pem" $DESTINATION/$DOMAIN.ca.pem
-mv "$DESTINATION/rootCA-key.pem" $DESTINATION/$DOMAIN.ca-key.pem
+MKCERT_CLIENT_OUT=$(CAROOT="$DESTINATION" mkcert -client -key-file "$FIRST.client.key" -cert-file "$FIRST.client.cert" $DOMAINS 2>&1)
+if [[ "$?" != "0" ]]; then echo -e "$MKCERT_CLIENT_OUT" 2>&1; exit 1; fi
+echo -e "${MKCERT_OUT/rootCA.pem/$FIRST.ca.cert}" 2>&1
+set -e
+
+PREFIX="$DESTINATION/$FIRST"
+mv "$DESTINATION/rootCA.pem" $PREFIX.ca.cert
+mv "$DESTINATION/rootCA-key.pem" $PREFIX.ca.key
+chmod 644 $PREFIX.ca.key $PREFIX.ca.cert $PREFIX.key $PREFIX.cert $PREFIX.client.key $PREFIX.client.cert
