@@ -1,4 +1,4 @@
-# docker build -t livingdocs/odyssey:1.3 . -f debian.Dockerfile
+# docker build -t livingdocs/odyssey:1.3 . -f Dockerfile
 # docker run --rm -p 6543:6543 livingdocs/odyssey:1.3
 FROM debian:bullseye as builder
 RUN export DEBIAN_FRONTEND=noninteractive && \
