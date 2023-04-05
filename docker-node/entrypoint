@@ -1,6 +1,19 @@
 #!/bin/bash
 if [ "$#" != "0" ]; then exec $@; fi
 
+if [ "$PLUGIN_DOCKERHOSTSSHKEY" != "" ]; then
+  export DOCKER_HOST="ssh://docker"
+  echo "$PLUGIN_DOCKERHOSTSSHKEY" > ~/.ssh/private_key
+  chmod 600 ~/.ssh/private_key
+
+  echo "Host docker" >> ~/.ssh/config
+  echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+  echo "  HostName $PLUGIN_DOCKERHOSTSSHIP" >> ~/.ssh/config
+  echo "  Port ${PLUGIN_DOCKERHOSTSSHPORT:-22}" >> ~/.ssh/config
+  echo "  User ${PLUGIN_DOCKERHOSTSSHUSER:-root}" >> ~/.ssh/config
+  echo "  IdentityFile ~/.ssh/private_key" >> ~/.ssh/config
+fi
+
 set -ef
 if [ -n "$PLUGIN_WHENCHANGED" ]; then files-changed "$PLUGIN_WHENCHANGED" || exit 0; fi
 docker-login || true
