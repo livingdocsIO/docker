@@ -9,9 +9,9 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/node
 ```sh
 docker build -t livingdocs/node:14.7 -t livingdocs/node:14 - < node-14.Dockerfile
 docker build -t livingdocs/node:16.3 -t livingdocs/node:16 - < node-16.Dockerfile
-docker build -t livingdocs/node:18.2 -t livingdocs/node:18 - < node-18.Dockerfile
+docker build -t livingdocs/node:18.3 -t livingdocs/node:18 - < node-18.Dockerfile
 docker push livingdocs/node:18
-docker push livingdocs/node:18.2
+docker push livingdocs/node:18.3
 docker push livingdocs/node:16
 docker push livingdocs/node:16.3
 docker push livingdocs/node:14
