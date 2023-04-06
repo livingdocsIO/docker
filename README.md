@@ -149,7 +149,9 @@ Build:
 ```sh
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:6.31 livingdocs/elasticsearch:6.8.21
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.6 livingdocs/elasticsearch:7.17.6
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.9 livingdocs/elasticsearch:7.17.9
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.4.3 livingdocs/elasticsearch:8.4.3
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.7.0 livingdocs/elasticsearch:8.7.0
 ```
 
 Use:
