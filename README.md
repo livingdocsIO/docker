@@ -7,15 +7,13 @@ This repo is set up to use automated builds on docker hub.
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker build -t livingdocs/node:14.7 -t livingdocs/node:14 - < node-14.Dockerfile
-docker build -t livingdocs/node:16.3 -t livingdocs/node:16 - < node-16.Dockerfile
+docker build -t livingdocs/node:20.0 -t livingdocs/node:20 - < node-20.Dockerfile
 docker build -t livingdocs/node:18.3 -t livingdocs/node:18 - < node-18.Dockerfile
+docker build -t livingdocs/node:16.3 -t livingdocs/node:16 - < node-16.Dockerfile
 docker push livingdocs/node:18
 docker push livingdocs/node:18.3
 docker push livingdocs/node:16
 docker push livingdocs/node:16.3
-docker push livingdocs/node:14
-docker push livingdocs/node:14.7
 ```
 
 ### livingdocs/server-base
@@ -23,15 +21,15 @@ docker push livingdocs/node:14.7
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-docker build -f ./livingdocs-server-base/14.Dockerfile -t livingdocs/server-base:14.6 -t livingdocs/server-base:14 ./livingdocs-server-base
-docker build -f ./livingdocs-server-base/16.Dockerfile -t livingdocs/server-base:16.4 -t livingdocs/server-base:16 ./livingdocs-server-base
+docker build -f ./livingdocs-server-base/20.Dockerfile -t livingdocs/server-base:20.0 -t livingdocs/server-base:20 ./livingdocs-server-base
 docker build -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.2 -t livingdocs/server-base:18 ./livingdocs-server-base
+docker build -f ./livingdocs-server-base/16.Dockerfile -t livingdocs/server-base:16.4 -t livingdocs/server-base:16 ./livingdocs-server-base
+docker push livingdocs/server-base:20
+docker push livingdocs/server-base:20.0
 docker push livingdocs/server-base:18
 docker push livingdocs/server-base:18.2
 docker push livingdocs/server-base:16
 docker push livingdocs/server-base:16.4
-docker push livingdocs/server-base:14
-docker push livingdocs/server-base:14.6
 ```
 
 ### livingdocs/editor-base
@@ -39,15 +37,15 @@ docker push livingdocs/server-base:14.6
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-docker build -t livingdocs/editor-base:14.6 -t livingdocs/editor-base:14 - < ./livingdocs-editor-base/14.Dockerfile
-docker build -t livingdocs/editor-base:16.4 -t livingdocs/editor-base:16 - < ./livingdocs-editor-base/16.Dockerfile
+docker build -t livingdocs/editor-base:20.0 -t livingdocs/editor-base:20 - < ./livingdocs-editor-base/20.Dockerfile
 docker build -t livingdocs/editor-base:18.4 -t livingdocs/editor-base:18 - < ./livingdocs-editor-base/18.Dockerfile
+docker build -t livingdocs/editor-base:16.4 -t livingdocs/editor-base:16 - < ./livingdocs-editor-base/16.Dockerfile
+docker push livingdocs/editor-base:20
+docker push livingdocs/editor-base:20.0
 docker push livingdocs/editor-base:18
 docker push livingdocs/editor-base:18.4
 docker push livingdocs/editor-base:16
 docker push livingdocs/editor-base:16.4
-docker push livingdocs/editor-base:14
-docker push livingdocs/editor-base:14.6
 ```
 
 ### livingdocs/docker-node
