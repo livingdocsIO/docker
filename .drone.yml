@@ -36,26 +36,6 @@ steps:
     dockerfile: certbot-route53-postgres.Dockerfile
     repo: livingdocs/certbot-route53-postgres
 
-- name: node-12
-  image: livingdocs/docker-node
-  volumes:
-    - name: dockersocket
-      path: /var/run/docker.sock
-  settings:
-    whenChanged: node-12.Dockerfile
-    dockerfile: node-12.Dockerfile
-    repo: livingdocs/node
-
-- name: node-14
-  image: livingdocs/docker-node
-  volumes:
-    - name: dockersocket
-      path: /var/run/docker.sock
-  settings:
-    whenChanged: node-14.Dockerfile
-    dockerfile: node-14.Dockerfile
-    repo: livingdocs/node
-
 - name: odyssey
   image: livingdocs/docker-node
   volumes:
@@ -87,6 +67,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: 36d1201b450e272bb1ed8a1f9d30a1f60a819ed12c2d0894d6dc4c0a807b0d93
+hmac: 513b5e44a62ee10d59785cd1c34416ed0637dd091dbaee5ae992f28cbdca3079
 
 ...
