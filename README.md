@@ -7,13 +7,9 @@ This repo is set up to use automated builds on docker hub.
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker build -t livingdocs/node:20.0 -t livingdocs/node:20 - < node-20.Dockerfile
-docker build -t livingdocs/node:18.3 -t livingdocs/node:18 - < node-18.Dockerfile
-docker build -t livingdocs/node:16.3 -t livingdocs/node:16 - < node-16.Dockerfile
-docker push livingdocs/node:18
-docker push livingdocs/node:18.3
-docker push livingdocs/node:16
-docker push livingdocs/node:16.3
+docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:20.1 -t livingdocs/node:20 --push - < node-20.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:18.4 -t livingdocs/node:18 --push - < node-18.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:16.4 -t livingdocs/node:16 --push - < node-16.Dockerfile
 ```
 
 ### livingdocs/server-base
@@ -21,15 +17,9 @@ docker push livingdocs/node:16.3
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-docker build -f ./livingdocs-server-base/20.Dockerfile -t livingdocs/server-base:20.0 -t livingdocs/server-base:20 ./livingdocs-server-base
-docker build -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.2 -t livingdocs/server-base:18 ./livingdocs-server-base
-docker build -f ./livingdocs-server-base/16.Dockerfile -t livingdocs/server-base:16.4 -t livingdocs/server-base:16 ./livingdocs-server-base
-docker push livingdocs/server-base:20
-docker push livingdocs/server-base:20.0
-docker push livingdocs/server-base:18
-docker push livingdocs/server-base:18.2
-docker push livingdocs/server-base:16
-docker push livingdocs/server-base:16.4
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/20.Dockerfile -t livingdocs/server-base:20.1 -t livingdocs/server-base:20 ./livingdocs-server-base --push
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.3 -t livingdocs/server-base:18 ./livingdocs-server-base --push
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/16.Dockerfile -t livingdocs/server-base:16.5 -t livingdocs/server-base:16 ./livingdocs-server-base --push
 ```
 
 ### livingdocs/editor-base
@@ -37,15 +27,9 @@ docker push livingdocs/server-base:16.4
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-docker build -t livingdocs/editor-base:20.0 -t livingdocs/editor-base:20 - < ./livingdocs-editor-base/20.Dockerfile
-docker build -t livingdocs/editor-base:18.4 -t livingdocs/editor-base:18 - < ./livingdocs-editor-base/18.Dockerfile
-docker build -t livingdocs/editor-base:16.4 -t livingdocs/editor-base:16 - < ./livingdocs-editor-base/16.Dockerfile
-docker push livingdocs/editor-base:20
-docker push livingdocs/editor-base:20.0
-docker push livingdocs/editor-base:18
-docker push livingdocs/editor-base:18.4
-docker push livingdocs/editor-base:16
-docker push livingdocs/editor-base:16.4
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:20.1 -t livingdocs/editor-base:20 --push - < ./livingdocs-editor-base/20.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:18.5 -t livingdocs/editor-base:18 --push - < ./livingdocs-editor-base/18.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:16.5 -t livingdocs/editor-base:16 --push - < ./livingdocs-editor-base/16.Dockerfile
 ```
 
 ### livingdocs/docker-node
@@ -150,11 +134,12 @@ regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.6 livingdocs/
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.9 livingdocs/elasticsearch:7.17.9
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.4.3 livingdocs/elasticsearch:8.4.3
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.7.0 livingdocs/elasticsearch:8.7.0
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.8.1 livingdocs/elasticsearch:8.8.1
 ```
 
 Use:
 ```sh
-docker run --name elasticsearch7 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:7.10.2
+docker run --name elasticsearch8 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:8.8.1
 ```
 
 
