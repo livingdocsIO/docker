@@ -7,8 +7,8 @@ This repo is set up to use automated builds on docker hub.
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:20.1 -t livingdocs/node:20 --push - < node-20.Dockerfile
-docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:18.5 -t livingdocs/node:18 --push - < node-18.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:20.2 -t livingdocs/node:20 --push - < node-20.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:18.6 -t livingdocs/node:18 --push - < node-18.Dockerfile
 ```
 
 ### livingdocs/server-base
@@ -16,8 +16,8 @@ docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/20.Dockerfile -t livingdocs/server-base:20.2 -t livingdocs/server-base:20 ./livingdocs-server-base --push
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.4 -t livingdocs/server-base:18 ./livingdocs-server-base --push
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/20.Dockerfile -t livingdocs/server-base:20.3 -t livingdocs/server-base:20 ./livingdocs-server-base --push
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.5 -t livingdocs/server-base:18 ./livingdocs-server-base --push
 ```
 
 ### livingdocs/editor-base
@@ -25,8 +25,8 @@ docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdoc
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:20.2 -t livingdocs/editor-base:20 --push - < ./livingdocs-editor-base/20.Dockerfile
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:18.6 -t livingdocs/editor-base:18 --push - < ./livingdocs-editor-base/18.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:20.3 -t livingdocs/editor-base:20 --push - < ./livingdocs-editor-base/20.Dockerfile
+docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:18.7 -t livingdocs/editor-base:18 --push - < ./livingdocs-editor-base/18.Dockerfile
 docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:16.5 -t livingdocs/editor-base:16 --push - < ./livingdocs-editor-base/16.Dockerfile
 ```
 
@@ -132,12 +132,12 @@ regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.6 livingdocs/
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.9 livingdocs/elasticsearch:7.17.9
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.4.3 livingdocs/elasticsearch:8.4.3
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.7.0 livingdocs/elasticsearch:8.7.0
-regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.8.1 livingdocs/elasticsearch:8.8.1
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.12.0 livingdocs/elasticsearch:8.12.0
 ```
 
 Use:
 ```sh
-docker run --name elasticsearch8 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:8.8.1
+docker run --name elasticsearch8 -p 9200:9200 -e 'discovery.type=single-node' livingdocs/elasticsearch:8.12.0
 ```
 
 
