@@ -54,7 +54,7 @@ else
   PLUGIN_CACHE=${PLUGIN_CACHE:-true}
   if [ "$PLUGIN_CACHE" == "false" ]; then EXTRA_OPTS="$EXTRA_OPTS --no-cache"; fi
 
-  docker build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS $PLUGIN_CONTEXT
+  docker build --build-arg DRONE_BRANCH=$DRONE_BRANCH --build-arg DRONE_COMMIT_SHA=$DRONE_COMMIT_SHA --build-arg DRONE_SEMVER=$DRONE_SEMVER --build-arg DRONE_SEMVER_SHORT=$DRONE_SEMVER_SHORT --build-arg DRONE_TAG=$DRONE_TAG -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS $PLUGIN_CONTEXT
 fi
 
 if [ "${PLUGIN_PUSH:-false}" == "true" ]; then
