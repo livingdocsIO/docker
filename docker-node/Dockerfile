@@ -1,6 +1,6 @@
 FROM docker:23.0.3-dind
-ADD https://github.com/docker/buildx/releases/download/v0.10.4/buildx-v0.10.4.linux-amd64 /root/.docker/cli-plugins/docker-buildx
-ADD https://github.com/regclient/regclient/releases/download/v0.4.7/regctl-linux-amd64 /usr/local/bin/regctl
+ADD https://github.com/docker/buildx/releases/download/v0.12.1/buildx-v0.12.1.linux-amd64 /root/.docker/cli-plugins/docker-buildx
+ADD https://github.com/regclient/regclient/releases/download/v0.5.6/regctl-linux-amd64 /usr/local/bin/regctl
 ADD ./* /usr/local/bin/
 
 USER root
