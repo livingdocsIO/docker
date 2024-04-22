@@ -133,6 +133,7 @@ regctl image cp docker.elastic.co/elasticsearch/elasticsearch:7.17.9 livingdocs/
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.4.3 livingdocs/elasticsearch:8.4.3
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.7.0 livingdocs/elasticsearch:8.7.0
 regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.12.0 livingdocs/elasticsearch:8.12.0
+regctl image cp docker.elastic.co/elasticsearch/elasticsearch:8.13.2 livingdocs/elasticsearch:8.13.2
 ```
 
 Use:
