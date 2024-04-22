@@ -7,7 +7,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   sh -c 'curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/postgres.gpg' && \
   apt update && apt install -y --no-install-recommends build-essential cmake git libssl-dev openssl libpam0g-dev postgresql-14 gcc gdb libpam0g-dev valgrind libpq5 libpq-dev postgresql-common postgresql-server-dev-14
 
-RUN git clone --depth 1 --branch=1.3 https://github.com/yandex/odyssey.git /tmp/odyssey
+RUN git clone --depth 1 --branch=master https://github.com/yandex/odyssey.git /tmp/odyssey && \
+  cd /tmp/odyssey && \
+  git reset --hard ddbbb698b7f202cf753fdca3401014de2ff08fdd
 WORKDIR /tmp/odyssey
 RUN cmake -S $PWD -Bbuild -DCMAKE_BUILD_TYPE=Release -DCC_FLAGS="-Wextra -Wstrict-aliasing" -DUSE_SCRAM=YES
 RUN make -Cbuild -j8
