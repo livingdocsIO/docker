@@ -2,13 +2,31 @@
 
 This repo is set up to use automated builds on docker hub.
 
+### Multi arch builds
+With Docker:
+```
+buildcontainer () { docker buildx build --no-cache --platform linux/amd64,linux/arm64  "$@" }
+pushcontainer () { for var in "$@"; do docker push "$var"; done }
+```
+
+With Lima
+```
+lima sudo systemctl start containerd
+lima sudo nerdctl run --privileged --rm tonistiigi/binfmt:qemu-v7.0.0-28@sha256:66e11bea77a5ea9d6f0fe79b57cd2b189b5d15b93a2bdb925be22949232e4e55 --install all
+
+buildcontainer () { nerdctl build --platform=amd64,arm64 "$@" }
+pushcontainer () { for var in "$@"; do nerdctl push --all-platforms "$var"; done }
+```
+
 ### livingdocs/node
 
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:20.2 -t livingdocs/node:20 --push - < node-20.Dockerfile
-docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs/node:18.6 -t livingdocs/node:18 --push - < node-18.Dockerfile
+buildcontainer -t livingdocs/node:20.4 -t livingdocs/node:20 -f node-20.Dockerfile .
+buildcontainer -t livingdocs/node:18.7 -t livingdocs/node:18 -f node-18.Dockerfile .
+pushcontainer livingdocs/node:20.4 livingdocs/node:20
+pushcontainer livingdocs/node:18.7 livingdocs/node:18
 ```
 
 ### livingdocs/server-base
@@ -16,8 +34,10 @@ docker buildx build --no-cache --platform linux/amd64,linux/arm64  -t livingdocs
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/20.Dockerfile -t livingdocs/server-base:20.3 -t livingdocs/server-base:20 ./livingdocs-server-base --push
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdocs-server-base/18.Dockerfile -t livingdocs/server-base:18.5 -t livingdocs/server-base:18 ./livingdocs-server-base --push
+buildcontainer  -t livingdocs/server-base:20.5 -t livingdocs/server-base:20 -f ./livingdocs-server-base/20.Dockerfile ./livingdocs-server-base
+buildcontainer  -t livingdocs/server-base:18.7 -t livingdocs/server-base:18 -f ./livingdocs-server-base/18.Dockerfile ./livingdocs-server-base
+pushcontainer livingdocs/server-base:20.5 livingdocs/server-base:20
+pushcontainer livingdocs/server-base:18.7 livingdocs/server-base:18
 ```
 
 ### livingdocs/editor-base
@@ -25,9 +45,10 @@ docker buildx build --no-cache --platform linux/amd64,linux/arm64 -f ./livingdoc
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:20.3 -t livingdocs/editor-base:20 --push - < ./livingdocs-editor-base/20.Dockerfile
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:18.7 -t livingdocs/editor-base:18 --push - < ./livingdocs-editor-base/18.Dockerfile
-docker buildx build --no-cache --platform linux/amd64,linux/arm64 -t livingdocs/editor-base:16.5 -t livingdocs/editor-base:16 --push - < ./livingdocs-editor-base/16.Dockerfile
+buildcontainer  -t livingdocs/editor-base:20.5 -t livingdocs/editor-base:20 -f ./livingdocs-editor-base/20.Dockerfile ./livingdocs-editor-base
+buildcontainer  -t livingdocs/editor-base:18.9 -t livingdocs/editor-base:18 -f ./livingdocs-editor-base/18.Dockerfile ./livingdocs-editor-base
+pushcontainer livingdocs/editor-base:20.5 livingdocs/editor-base:20
+pushcontainer livingdocs/editor-base:18.9 livingdocs/editor-base:18
 ```
 
 ### livingdocs/docker-node
@@ -37,15 +58,15 @@ The official docker image with node, git and curl
 On Docker Hub: https://hub.docker.com/r/livingdocs/docker-node
 
 ```sh
-docker build -t livingdocs/docker-node:22-16 -f ./docker-node/Dockerfile ./docker-node
-docker push livingdocs/docker-node:22-16
+buildcontainer -t livingdocs/docker-node:22-16 -f ./docker-node/Dockerfile ./docker-node
+pushcontainer livingdocs/docker-node:22-16
 ```
 
 ### livingdocs/postgres-exporter
 
 ```sh
-docker build -t livingdocs/postgres-exporter -f ./postgres-exporter/Dockerfile ./postgres-exporter
-docker push livingdocs/postgres-exporter
+buildcontainer -t livingdocs/postgres-exporter -f ./postgres-exporter/Dockerfile ./postgres-exporter
+pushcontainer livingdocs/postgres-exporter
 ```
 
 ### livingdocs/odyssey
@@ -54,8 +75,8 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/odyssey
 
 Build:
 ```sh
-docker build -t livingdocs/odyssey:1.4rc -f odyssey/Dockerfile ./odyssey
-docker push livingdocs/odyssey:1.4rc
+buildcontainer -t livingdocs/odyssey:1.4rc -f odyssey/Dockerfile ./odyssey
+pushcontainer livingdocs/odyssey:1.4rc
 ```
 
 ### livingdocs/pgbouncer
@@ -64,8 +85,8 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/pgbouncer
 
 Build:
 ```sh
-docker build -t livingdocs/pgbouncer -f ./pgbouncer/Dockerfile ./pgbouncer
-docker push livingdocs/pgbouncer
+buildcontainer -t livingdocs/pgbouncer -f ./pgbouncer/Dockerfile ./pgbouncer
+pushcontainer livingdocs/pgbouncer
 ```
 
 ### livingdocs/certbot-route53-postgres
@@ -74,9 +95,8 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/certbot-route53-postgres
 
 Build:
 ```sh
-docker build -t livingdocs/certbot-route53-postgres - < certbot-route53-postgres.Dockerfile
-
-docker push livingdocs/certbot-route53-postgres
+buildcontainer -t livingdocs/certbot-route53-postgres -f certbot-route53-postgres.Dockerfile .
+pushcontainer livingdocs/certbot-route53-postgres
 ```
 
 ### livingdocs/letsencrypt
@@ -88,8 +108,8 @@ Certificates are pushed to an s3 bucket, so they can be fetched from other scrip
 
 Build:
 ```sh
-docker build -t livingdocs/letsencrypt:1.1 -f ./letsencrypt/Dockerfile ./letsencrypt
-docker push livingdocs/letsencrypt:1.1
+buildcontainer -t livingdocs/letsencrypt:1.1 -f ./letsencrypt/Dockerfile ./letsencrypt
+pushcontainer livingdocs/letsencrypt:1.1
 ```
 
 
@@ -101,8 +121,8 @@ The envoy docker image with curl, nano and jq, envsubst and [oidc filter](https:
 
 Build:
 ```sh
-docker build -t livingdocs/envoy:v1.24.0 -f ./envoy/Dockerfile ./envoy
-docker push livingdocs/envoy:v1.24.0
+buildcontainer -t livingdocs/envoy:v1.24.0 -f ./envoy/Dockerfile ./envoy
+pushcontainer livingdocs/envoy:v1.24.0
 ```
 
 
@@ -181,8 +201,8 @@ The image has some dependencies pre-installed: `bash`, `curl`, `dig`, `jq`
 
 Build:
 ```sh
-docker build -t livingdocs/file-change-hook:1.0 -f ./file-change-hook/Dockerfile ./file-change-hook
-docker push livingdocs/file-change-hook:1.0
+buildcontainer -t livingdocs/file-change-hook:1.0 -f ./file-change-hook/Dockerfile ./file-change-hook
+pushcontainer livingdocs/file-change-hook:1.0
 ```
 
 Use:
