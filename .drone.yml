@@ -44,7 +44,7 @@ steps:
   settings:
     whenChanged: ^odyssey/
     context: ./odyssey
-    dockerfile: odyssey/debian.Dockerfile
+    dockerfile: odyssey/Dockerfile
     repo: livingdocs/odyssey
 
 - name: blackbox-exporter
@@ -67,6 +67,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: 513b5e44a62ee10d59785cd1c34416ed0637dd091dbaee5ae992f28cbdca3079
+hmac: f25ae1c3d01707be25e4f57d119f898e385a18640dfdc92c7225fd686a6b5ddf
 
 ...
