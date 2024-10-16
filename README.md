@@ -36,12 +36,12 @@ pushcontainer livingdocs/node:18.7 livingdocs/node:18
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-buildcontainer  -t livingdocs/server-base:22.0 -t livingdocs/server-base:22 -f ./livingdocs-server-base/22.Dockerfile ./livingdocs-server-base
-buildcontainer  -t livingdocs/server-base:20.5 -t livingdocs/server-base:20 -f ./livingdocs-server-base/20.Dockerfile ./livingdocs-server-base
-buildcontainer  -t livingdocs/server-base:18.7 -t livingdocs/server-base:18 -f ./livingdocs-server-base/18.Dockerfile ./livingdocs-server-base
-pushcontainer livingdocs/server-base:22.0 livingdocs/server-base:22
-pushcontainer livingdocs/server-base:20.5 livingdocs/server-base:20
-pushcontainer livingdocs/server-base:18.7 livingdocs/server-base:18
+buildcontainer  -t livingdocs/server-base:22.1 -t livingdocs/server-base:22 -f ./livingdocs-server-base/22.Dockerfile ./livingdocs-server-base
+buildcontainer  -t livingdocs/server-base:20.6 -t livingdocs/server-base:20 -f ./livingdocs-server-base/20.Dockerfile ./livingdocs-server-base
+buildcontainer  -t livingdocs/server-base:18.8 -t livingdocs/server-base:18 -f ./livingdocs-server-base/18.Dockerfile ./livingdocs-server-base
+pushcontainer livingdocs/server-base:22.1 livingdocs/server-base:22
+pushcontainer livingdocs/server-base:20.6 livingdocs/server-base:20
+pushcontainer livingdocs/server-base:18.8 livingdocs/server-base:18
 ```
 
 ### livingdocs/editor-base
@@ -49,12 +49,12 @@ pushcontainer livingdocs/server-base:18.7 livingdocs/server-base:18
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-buildcontainer  -t livingdocs/editor-base:22.0 -t livingdocs/editor-base:22 -f ./livingdocs-editor-base/22.Dockerfile ./livingdocs-editor-base
-buildcontainer  -t livingdocs/editor-base:20.5 -t livingdocs/editor-base:20 -f ./livingdocs-editor-base/20.Dockerfile ./livingdocs-editor-base
-buildcontainer  -t livingdocs/editor-base:18.9 -t livingdocs/editor-base:18 -f ./livingdocs-editor-base/18.Dockerfile ./livingdocs-editor-base
-pushcontainer livingdocs/editor-base:22.0 livingdocs/editor-base:22
-pushcontainer livingdocs/editor-base:20.5 livingdocs/editor-base:20
-pushcontainer livingdocs/editor-base:18.9 livingdocs/editor-base:18
+buildcontainer  -t livingdocs/editor-base:22.1 -t livingdocs/editor-base:22 -f ./livingdocs-editor-base/22.Dockerfile ./livingdocs-editor-base
+buildcontainer  -t livingdocs/editor-base:20.6 -t livingdocs/editor-base:20 -f ./livingdocs-editor-base/20.Dockerfile ./livingdocs-editor-base
+buildcontainer  -t livingdocs/editor-base:18.10 -t livingdocs/editor-base:18 -f ./livingdocs-editor-base/18.Dockerfile ./livingdocs-editor-base
+pushcontainer livingdocs/editor-base:22.1 livingdocs/editor-base:22
+pushcontainer livingdocs/editor-base:20.6 livingdocs/editor-base:20
+pushcontainer livingdocs/editor-base:18.10 livingdocs/editor-base:18
 ```
 
 ### livingdocs/docker-node
