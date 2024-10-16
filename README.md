@@ -127,8 +127,8 @@ The envoy docker image with curl, nano and jq, envsubst and [oidc filter](https:
 
 Build:
 ```sh
-buildcontainer -t livingdocs/envoy:v1.24.0 -f ./envoy/Dockerfile ./envoy
-pushcontainer livingdocs/envoy:v1.24.0
+buildcontainer -t livingdocs/envoy:v1.31.0 -f ./envoy/Dockerfile ./envoy
+pushcontainer livingdocs/envoy:v1.31.0
 ```
 
 

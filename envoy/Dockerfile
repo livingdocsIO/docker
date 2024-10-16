@@ -1,9 +1,10 @@
-FROM envoyproxy/envoy-alpine:v1.21.0
+FROM envoyproxy/envoy:v1.31.0
 ADD ./oidc.wasm /var/local/lib/wasm-filters/oidc.wasm
 ADD ./entrypoint /entrypoint
-RUN rm /etc/envoy/envoy.yaml && \
-  mkdir /home/envoy && chown envoy:envoy /home/envoy && \
-  apk add bash curl nano jq && apk add envsubst --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
+ADD envoy.yaml /etc/envoy/envoy.yaml
+RUN apt-get update && apt-get upgrade -yyyy && \
+  apt-get install -yyyy curl nano jq gettext-base && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/entrypoint"]
 CMD [ ]
