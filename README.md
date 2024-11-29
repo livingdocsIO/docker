@@ -24,7 +24,7 @@ buildcontainer () { docker buildx build --no-cache --push --platform linux/amd64
 With Lima
 ```
 lima sudo systemctl start containerd
-lima sudo nerdctl run --privileged --rm tonistiigi/binfmt:qemu-v7.0.0-28@sha256:66e11bea77a5ea9d6f0fe79b57cd2b189b5d15b93a2bdb925be22949232e4e55 --install all
+lima sudo nerdctl run --privileged --rm tonistiigi/binfmt:qemu-v8.1.5 --install all
 
 buildcontainer () { nerdctl build --platform=amd64,arm64 "$@" }
 pushcontainer () { for var in "$@"; do nerdctl push --all-platforms "$var"; done }
