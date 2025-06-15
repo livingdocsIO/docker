@@ -6,7 +6,7 @@ This repo is set up to use automated builds on docker hub.
 
 For multi arch builds on Docker we use buildx. You have to create a builder before being able to build the containers.
 ```
-docker buildx create --name container --driver=docker-container container
+docker buildx create --name container --driver=docker-container
 ```
 
 The following functions are used to build and push images on x86 machines:
