@@ -48,6 +48,7 @@ pushcontainer livingdocs/node:20.9 livingdocs/node:20 # skip it when using docke
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
+buildcontainer  -t livingdocs/server-base:24.0-pc -t livingdocs/server-base:24-pc -f ./livingdocs-server-base/24-pc.Dockerfile ./livingdocs-server-base
 buildcontainer  -t livingdocs/server-base:24.0 -t livingdocs/server-base:24 -f ./livingdocs-server-base/24.Dockerfile ./livingdocs-server-base
 buildcontainer  -t livingdocs/server-base:22.6 -t livingdocs/server-base:22 -f ./livingdocs-server-base/22.Dockerfile ./livingdocs-server-base
 buildcontainer  -t livingdocs/server-base:20.11 -t livingdocs/server-base:20 -f ./livingdocs-server-base/20.Dockerfile ./livingdocs-server-base
