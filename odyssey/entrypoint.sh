@@ -27,8 +27,8 @@ if [ "$first" == "odyssey" ]; then
 fi
 echo $first
 if [ "$first" == "proxy" ]; then
+  [ "${DATABASE_PORT:-}" == "" ] && export DATABASE_PORT=5432
   [ "${DATABASE_HOST:-}" == "" ] && help DATABASE_HOST
-  [ "${DATABASE_PORT:-}" == "" ] && export DATABASE_PORT = 5432
   [ "${DATABASE_NAME:-}" == "" ] && help DATABASE_NAME
   [ "${DATABASE_USER:-}" == "" ] && help DATABASE_USER
   [ "${DATABASE_PASSWORD:-}" == "" ] && help DATABASE_PASSWORD

@@ -97,8 +97,8 @@ On Docker Hub: https://hub.docker.com/r/livingdocs/odyssey
 
 Build:
 ```sh
-buildcontainer -t livingdocs/odyssey:1.4rc -f odyssey/Dockerfile ./odyssey
-pushcontainer livingdocs/odyssey:1.4rc # skip it when using docker
+buildcontainer -t livingdocs/odyssey:1.4 -f odyssey/Dockerfile ./odyssey
+pushcontainer livingdocs/odyssey:1.4 # skip it when using docker
 ```
 
 ### livingdocs/pgbouncer

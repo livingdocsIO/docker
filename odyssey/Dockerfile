@@ -1,18 +1,16 @@
-# docker build -t livingdocs/odyssey:1.3 . -f Dockerfile
-# docker run --rm -p 6543:6543 livingdocs/odyssey:1.3
-FROM debian:bullseye as builder
+# docker build -t livingdocs/odyssey:1.4 . -f Dockerfile
+# docker run --rm -p 6543:6543 livingdocs/odyssey:1.4
+FROM debian:bookworm as builder
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt update && apt install -y curl gnupg && \
-  echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   sh -c 'curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/postgres.gpg' && \
-  apt update && apt install -y --no-install-recommends build-essential cmake git libssl-dev openssl libpam0g-dev postgresql-14 gcc gdb libpam0g-dev valgrind libpq5 libpq-dev postgresql-common postgresql-server-dev-14
+  apt update && apt install -y --no-install-recommends build-essential cmake git libssl-dev openssl libpam0g-dev postgresql-17 gcc gdb libpam0g-dev valgrind libpq5 libpq-dev postgresql-common postgresql-server-dev-17
 
-RUN git clone --depth 1 --branch=master https://github.com/yandex/odyssey.git /tmp/odyssey && \
-  cd /tmp/odyssey && \
-  git reset --hard ddbbb698b7f202cf753fdca3401014de2ff08fdd
+RUN git clone --depth 1 --branch=1.4.0 https://github.com/yandex/odyssey.git /tmp/odyssey && cd /tmp/odyssey
 WORKDIR /tmp/odyssey
 RUN cmake -S $PWD -Bbuild -DCMAKE_BUILD_TYPE=Release -DCC_FLAGS="-Wextra -Wstrict-aliasing" -DUSE_SCRAM=YES
-RUN make -Cbuild -j8
+RUN make -Cbuild -j6
 # RUN make build_release
 
 # Odyssey on alpine linux has tls issues I wasn't able to solve
@@ -21,9 +19,9 @@ RUN make -Cbuild -j8
 # Issue on github: https://github.com/yandex/odyssey/issues/134
 # Alpine linux package which also doesn't work
 #   tests are disabled there: https://git.alpinelinux.org/aports/tree/testing/odyssey/APKBUILD#n11
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 RUN apt-get update && apt-get upgrade -y && \
-  apt-get -y install --no-install-recommends libssl1.1 ca-certificates libpam0g gettext-base && \
+  apt-get -y install --no-install-recommends libssl3 ca-certificates libpam0g gettext-base && \
   apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
   adduser --uid 1000 --no-create-home --disabled-password --gecos '' odyssey
 
