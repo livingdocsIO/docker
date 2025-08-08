@@ -24,7 +24,7 @@ buildcontainer () { docker buildx build --no-cache --push --platform linux/amd64
 With Lima
 ```
 lima sudo systemctl start containerd
-lima sudo nerdctl run --privileged --rm tonistiigi/binfmt:qemu-v8.1.5 --install all
+lima sudo nerdctl run --privileged --rm tonistiigi/binfmt:qemu-v9.2.2 --install all
 
 buildcontainer () { nerdctl build --platform=amd64,arm64 "$@" }
 pushcontainer () { for var in "$@"; do nerdctl push --all-platforms "$var"; done }
@@ -35,12 +35,14 @@ pushcontainer () { for var in "$@"; do nerdctl push --all-platforms "$var"; done
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-buildcontainer -t livingdocs/node:24.0 -t livingdocs/node:24 -f node-24.Dockerfile .
-buildcontainer -t livingdocs/node:22.5 -t livingdocs/node:22 -f node-22.Dockerfile .
-buildcontainer -t livingdocs/node:20.9 -t livingdocs/node:20 -f node-20.Dockerfile .
-pushcontainer livingdocs/node:24.0 livingdocs/node:24 # skip it when using docker
-pushcontainer livingdocs/node:22.5 livingdocs/node:22 # skip it when using docker
-pushcontainer livingdocs/node:20.9 livingdocs/node:20 # skip it when using docker
+buildcontainer -t livingdocs/node:24.1-pc -t livingdocs/node:24-pc -f node-24-pc.Dockerfile .
+buildcontainer -t livingdocs/node:24.1 -t livingdocs/node:24 -f node-24.Dockerfile .
+buildcontainer -t livingdocs/node:22.6 -t livingdocs/node:22 -f node-22.Dockerfile .
+buildcontainer -t livingdocs/node:20.10 -t livingdocs/node:20 -f node-20.Dockerfile .
+pushcontainer livingdocs/node:24.1-pc livingdocs/node:24-pc # skip it when using docker
+pushcontainer livingdocs/node:24.1 livingdocs/node:24 # skip it when using docker
+pushcontainer livingdocs/node:22.6 livingdocs/node:22 # skip it when using docker
+pushcontainer livingdocs/node:20.10 livingdocs/node:20 # skip it when using docker
 ```
 
 ### livingdocs/server-base
@@ -48,13 +50,14 @@ pushcontainer livingdocs/node:20.9 livingdocs/node:20 # skip it when using docke
 On Docker Hub: https://hub.docker.com/r/livingdocs/server-base
 
 ```sh
-buildcontainer  -t livingdocs/server-base:24.0-pc -t livingdocs/server-base:24-pc -f ./livingdocs-server-base/24-pc.Dockerfile ./livingdocs-server-base
-buildcontainer  -t livingdocs/server-base:24.0 -t livingdocs/server-base:24 -f ./livingdocs-server-base/24.Dockerfile ./livingdocs-server-base
-buildcontainer  -t livingdocs/server-base:22.6 -t livingdocs/server-base:22 -f ./livingdocs-server-base/22.Dockerfile ./livingdocs-server-base
-buildcontainer  -t livingdocs/server-base:20.11 -t livingdocs/server-base:20 -f ./livingdocs-server-base/20.Dockerfile ./livingdocs-server-base
-pushcontainer livingdocs/server-base:24.0 livingdocs/server-base:24 # skip it when using docker
-pushcontainer livingdocs/server-base:22.6 livingdocs/server-base:22 # skip it when using docker
-pushcontainer livingdocs/server-base:20.11 livingdocs/server-base:20 # skip it when using docker
+buildcontainer  -t livingdocs/server-base:24.1-pc -t livingdocs/server-base:24-pc -f ./livingdocs-server-base/24-pc.Dockerfile ./livingdocs-server-base
+buildcontainer  -t livingdocs/server-base:24.1 -t livingdocs/server-base:24 -f ./livingdocs-server-base/24.Dockerfile ./livingdocs-server-base
+buildcontainer  -t livingdocs/server-base:22.7 -t livingdocs/server-base:22 -f ./livingdocs-server-base/22.Dockerfile ./livingdocs-server-base
+buildcontainer  -t livingdocs/server-base:20.12 -t livingdocs/server-base:20 -f ./livingdocs-server-base/20.Dockerfile ./livingdocs-server-base
+pushcontainer livingdocs/server-base:24.1-pc livingdocs/server-base:24-pc # skip it when using docker
+pushcontainer livingdocs/server-base:24.1 livingdocs/server-base:24 # skip it when using docker
+pushcontainer livingdocs/server-base:22.7 livingdocs/server-base:22 # skip it when using docker
+pushcontainer livingdocs/server-base:20.12 livingdocs/server-base:20 # skip it when using docker
 ```
 
 ### livingdocs/editor-base
@@ -62,12 +65,12 @@ pushcontainer livingdocs/server-base:20.11 livingdocs/server-base:20 # skip it w
 On Docker Hub: https://hub.docker.com/r/livingdocs/editor-base
 
 ```sh
-buildcontainer  -t livingdocs/editor-base:24.0 -t livingdocs/editor-base:24 -f ./livingdocs-editor-base/24.Dockerfile ./livingdocs-editor-base
-buildcontainer  -t livingdocs/editor-base:22.6 -t livingdocs/editor-base:22 -f ./livingdocs-editor-base/22.Dockerfile ./livingdocs-editor-base
-buildcontainer  -t livingdocs/editor-base:20.11 -t livingdocs/editor-base:20 -f ./livingdocs-editor-base/20.Dockerfile ./livingdocs-editor-base
-pushcontainer livingdocs/editor-base:24.0 livingdocs/editor-base:24 # skip it when using docker
-pushcontainer livingdocs/editor-base:22.6 livingdocs/editor-base:22 # skip it when using docker
-pushcontainer livingdocs/editor-base:20.11 livingdocs/editor-base:20 # skip it when using docker
+buildcontainer  -t livingdocs/editor-base:24.1 -t livingdocs/editor-base:24 -f ./livingdocs-editor-base/24.Dockerfile ./livingdocs-editor-base
+buildcontainer  -t livingdocs/editor-base:22.7 -t livingdocs/editor-base:22 -f ./livingdocs-editor-base/22.Dockerfile ./livingdocs-editor-base
+buildcontainer  -t livingdocs/editor-base:20.12 -t livingdocs/editor-base:20 -f ./livingdocs-editor-base/20.Dockerfile ./livingdocs-editor-base
+pushcontainer livingdocs/editor-base:24.1 livingdocs/editor-base:24 # skip it when using docker
+pushcontainer livingdocs/editor-base:22.7 livingdocs/editor-base:22 # skip it when using docker
+pushcontainer livingdocs/editor-base:20.12 livingdocs/editor-base:20 # skip it when using docker
 ```
 
 ### livingdocs/docker-node
