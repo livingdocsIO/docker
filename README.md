@@ -80,8 +80,8 @@ The official docker image with node, git and curl
 On Docker Hub: https://hub.docker.com/r/livingdocs/docker-node
 
 ```sh
-buildcontainer -t livingdocs/docker-node:22-16 -f ./docker-node/Dockerfile ./docker-node
-pushcontainer livingdocs/docker-node:22-16 # skip it when using docker
+buildcontainer -t livingdocs/docker-node:28-22 -f ./docker-node/Dockerfile ./docker-node
+pushcontainer livingdocs/docker-node:28-22 # skip it when using docker
 ```
 
 ### livingdocs/postgres-exporter

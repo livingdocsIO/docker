@@ -35,24 +35,35 @@ else
 
   LABELS="--label org.opencontainers.image.created=$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
-  if [ -n "$DRONE_COMMIT_LINK" ]; then LABELS="$LABELS --label org.opencontainers.image.source=$DRONE_COMMIT_LINK";
-  else LABELS="$LABELS --label org.opencontainers.image.source=$DRONE_REPO_LINK"; fi
+  if [ -n "$DRONE_COMMIT_LINK" ]; then
+    LABELS="$LABELS --label org.opencontainers.image.source=$DRONE_COMMIT_LINK";
+  else
+    LABELS="$LABELS --label org.opencontainers.image.source=$DRONE_REPO_LINK";
+  fi
 
   if [ -n "$DRONE_TAG" ]; then LABELS="$LABELS --label org.opencontainers.image.version=$DRONE_TAG"; fi
 
   LABELS="$LABELS --label org.opencontainers.image.vendor=Livingdocs"
   LABELS="$LABELS --label org.opencontainers.image.revision=$DRONE_COMMIT_SHA"
 
-
   if [ -n "$DRONE_BRANCH" ]; then LABELS="$LABELS --label livingdocs.branch=$(sed 's/[^a-zA-Z0-9.-_]/-/g' <<< "$DRONE_BRANCH")"; fi
 
-  RELEASE_CHANNEL=$(jq -er '.release.branch //empty' package.json 2>1 /dev/null || jq -er '.release.branches //empty' 2>1 /dev/null)
+  RELEASE_CHANNEL=$(jq -er '.release.branch // (.release.branches | select(type=="array") | .[0]) // empty' package.json 2>1 /dev/null)
   if [ -n "$RELEASE_CHANNEL" ]; then LABELS="$LABELS --label livingdocs.release=$RELEASE_CHANNEL"; fi
 
   PLUGIN_CONTEXT="${PLUGIN_CONTEXT:-.}"
   PLUGIN_DOCKERFILE="${PLUGIN_DOCKERFILE:-Dockerfile}"
   PLUGIN_CACHE=${PLUGIN_CACHE:-true}
   if [ "$PLUGIN_CACHE" == "false" ]; then EXTRA_OPTS="$EXTRA_OPTS --no-cache"; fi
+
+  PLUGIN_SECRETS=()
+  if [ -n "$PLUGIN_SECRET" ]; then PLUGIN_SECRETS+=("$PLUGIN_SECRET"); fi
+  for key in $(compgen -A variable PLUGIN_SECRET_); do
+    PLUGIN_SECRETS+=("${!key}")
+  done
+  for secret in "${PLUGIN_SECRETS[@]}"; do
+    EXTRA_OPTS="$EXTRA_OPTS --secret $secret"
+  done
 
   docker build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS $PLUGIN_CONTEXT
 fi

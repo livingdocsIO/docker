@@ -1,6 +1,7 @@
-FROM docker:23.0.3-dind
-ADD https://github.com/docker/buildx/releases/download/v0.10.4/buildx-v0.10.4.linux-amd64 /root/.docker/cli-plugins/docker-buildx
-ADD https://github.com/regclient/regclient/releases/download/v0.4.7/regctl-linux-amd64 /usr/local/bin/regctl
+FROM docker:28-dind
+ARG TARGETARCH
+ADD https://github.com/docker/buildx/releases/download/v0.29.1/buildx-v0.29.1.linux-${TARGETARCH} /root/.docker/cli-plugins/docker-buildx
+ADD https://github.com/regclient/regclient/releases/download/v0.9.2/regctl-linux-${TARGETARCH} /usr/local/bin/regctl
 ADD ./* /usr/local/bin/
 
 USER root
