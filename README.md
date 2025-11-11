@@ -35,11 +35,11 @@ pushcontainer () { for var in "$@"; do nerdctl push --all-platforms "$var"; done
 On Docker Hub: https://hub.docker.com/r/livingdocs/node
 
 ```sh
-buildcontainer -t livingdocs/node:24.1-pc -t livingdocs/node:24-pc -f node-24-pc.Dockerfile .
+buildcontainer -t livingdocs/node:24.2-pc -t livingdocs/node:24-pc -f node-24-pc.Dockerfile .
 buildcontainer -t livingdocs/node:24.1 -t livingdocs/node:24 -f node-24.Dockerfile .
 buildcontainer -t livingdocs/node:22.6 -t livingdocs/node:22 -f node-22.Dockerfile .
 buildcontainer -t livingdocs/node:20.11 -t livingdocs/node:20 -f node-20.Dockerfile .
-pushcontainer livingdocs/node:24.1-pc livingdocs/node:24-pc # skip it when using docker
+pushcontainer livingdocs/node:24.2-pc livingdocs/node:24-pc # skip it when using docker
 pushcontainer livingdocs/node:24.1 livingdocs/node:24 # skip it when using docker
 pushcontainer livingdocs/node:22.6 livingdocs/node:22 # skip it when using docker
 pushcontainer livingdocs/node:20.11 livingdocs/node:20 # skip it when using docker
