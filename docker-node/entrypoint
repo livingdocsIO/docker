@@ -48,7 +48,7 @@ else
 
   if [ -n "$DRONE_BRANCH" ]; then LABELS="$LABELS --label livingdocs.branch=$(sed 's/[^a-zA-Z0-9.-_]/-/g' <<< "$DRONE_BRANCH")"; fi
 
-  RELEASE_CHANNEL=$(jq -er '.release.branch // (.release.branches | select(type=="array") | .[0]) // empty' package.json 2>1 /dev/null)
+  RELEASE_CHANNEL=$(jq -er '.release.branch // (.release.branches[0] | strings // .name) // empty' package.json 2>1 /dev/null)
   if [ -n "$RELEASE_CHANNEL" ]; then LABELS="$LABELS --label livingdocs.release=$RELEASE_CHANNEL"; fi
 
   PLUGIN_CONTEXT="${PLUGIN_CONTEXT:-.}"
@@ -58,6 +58,7 @@ else
 
   PLUGIN_SECRETS=()
   if [ -n "$PLUGIN_SECRET" ]; then PLUGIN_SECRETS+=("$PLUGIN_SECRET"); fi
+
   for key in $(compgen -A variable PLUGIN_SECRET_); do
     PLUGIN_SECRETS+=("${!key}")
   done
@@ -65,6 +66,7 @@ else
     EXTRA_OPTS="$EXTRA_OPTS --secret $secret"
   done
 
+  echo "+ docker build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS $PLUGIN_CONTEXT" >&2
   docker build -f $PLUGIN_DOCKERFILE $LABELS $EXTRA_OPTS $PLUGIN_CONTEXT
 fi
 
