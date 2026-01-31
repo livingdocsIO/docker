@@ -8,7 +8,7 @@ FROM node:24-alpine3.22 AS node-24-alpine
 # 5. Add curl, git & nano to container
 
 FROM alpine:3.22
-ENV NODE_VERSION 24.11.0
+ENV NODE_VERSION 24.13.0
 
 RUN mkdir /app && addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -83,6 +83,7 @@ RUN mkdir /app && addgroup -g 1000 node \
   && npm --version \
   && rm -rf /tmp/*
 
+RUN apk add --no-cache bash
 COPY --from=node-24-alpine /usr/local/bin/docker-entrypoint.sh /usr/local/bin
 WORKDIR /app
 ENV NPM_CONFIG_LOGLEVEL=warn PATH=$PATH:/app/node_modules/.bin
