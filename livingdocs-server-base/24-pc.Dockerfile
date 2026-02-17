@@ -4,4 +4,5 @@
 #   RUN npm ci
 #   ADD . /app
 FROM livingdocs/node:24-pc
+RUN apk add --no-cache screen
 ADD ./wait-for-services /bin/wait-for-services
