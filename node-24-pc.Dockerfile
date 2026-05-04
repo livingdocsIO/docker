@@ -1,89 +1,33 @@
 FROM node:24-alpine3.22 AS node-24-alpine
 
-# This build script has 4 differences compared to the original build script
-# 1. It forces the build from source by setting CHECKSUM=''
-# 2. It enables pointer compression using ./configure --experimental-enable-pointer-compression
-# 3. Set WORKDIR /app and create that directory
-# 4. Set variables ENV NPM_CONFIG_LOGLEVEL=warn PATH=$PATH:/app/node_modules/.bin
-# 5. Add curl, git & nano to container
+# This build script has 5 differences compared to the original build script
+# 1. It enables pointer compression using ./configure --experimental-enable-pointer-compression
+# 2. Set WORKDIR /app and create that directory
+# 3. Set variables ENV NPM_CONFIG_LOGLEVEL=warn PATH=$PATH:/app/node_modules/.bin
+# 4. Add curl, git & nano to container
+# 5. does not ship with yarn
 
+FROM alpine:3.22 as builder
+ENV NODE_VERSION 24.15.0
+
+RUN apk add --no-cache build-base git python3 curl linux-headers openssl-dev ccache bash procps
+WORKDIR /build
+RUN git clone --depth 1 --branch v${NODE_VERSION} https://github.com/nodejs/node.git .
+RUN ./configure --experimental-enable-pointer-compression --prefix=/usr/local
+RUN make -j2
+RUN make install DESTDIR=/node-install
+
+# =============================================================================
+# Stage 2: Runtime image
+# =============================================================================
 FROM alpine:3.22
-ENV NODE_VERSION 24.13.0
 
-RUN mkdir /app && addgroup -g 1000 node \
-    && adduser -u 1000 -G node -s /bin/sh -D node \
-    && apk add --no-cache \
-        curl git nano libstdc++ \
-    && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
-      && case "${alpineArch##*-}" in \
-        x86_64) ARCH='x64' CHECKSUM="" OPENSSL_ARCH=linux-x86_64;; \
-        x86) OPENSSL_ARCH=linux-elf;; \
-        aarch64) OPENSSL_ARCH=linux-aarch64;; \
-        arm*) OPENSSL_ARCH=linux-armv4;; \
-        ppc64le) OPENSSL_ARCH=linux-ppc64le;; \
-        s390x) OPENSSL_ARCH=linux-s390x;; \
-        *) ;; \
-      esac \
-  && if [ -n "${CHECKSUM}" ]; then \
-    set -eu; \
-    curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz"; \
-    echo "$CHECKSUM  node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" | sha256sum -c - \
-      && tar -xJf "node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-      && ln -s /usr/local/bin/node /usr/local/bin/nodejs; \
-  else \
-    echo "Building from source" \
-    # backup build
-    && apk add --no-cache --virtual .build-deps-full \
-        binutils-gold \
-        g++ \
-        gcc \
-        gnupg \
-        libgcc \
-        linux-headers \
-        make \
-        python3 \
-        py-setuptools \
-    # use pre-existing gpg directory, see https://github.com/nodejs/docker-node/pull/1895#issuecomment-1550389150
-    && export GNUPGHOME="$(mktemp -d)" \
-    # gpg keys listed at https://github.com/nodejs/node#release-keys
-    && for key in \
-      C0D6248439F1D5604AAFFB4021D900FFDB233756 \
-      DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
-      CC68F5A3106FF448322E48ED27F5E38D5B0A215F \
-      8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-      890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
-      C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
-      108F52B48DB57BB0CC439B2997B01419BD92F80A \
-      A363A499291CBBC940DD62E41F10027AF002F8B0 \
-    ; do \
-      { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
-      { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
-    done \
-    && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz" \
-    && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-    && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-    && gpgconf --kill all \
-    && rm -rf "$GNUPGHOME" \
-    && grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-    && tar -xf "node-v$NODE_VERSION.tar.xz" \
-    && cd "node-v$NODE_VERSION" \
-    && ./configure --experimental-enable-pointer-compression \
-    && make -j2 V= \
-    && make install \
-    && apk del .build-deps-full \
-    && cd .. \
-    && rm -Rf "node-v$NODE_VERSION" \
-    && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt; \
-  fi \
-  && rm -f "node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" \
-  # Remove unused OpenSSL headers to save ~34MB. See this NodeJS issue: https://github.com/nodejs/node/issues/46451
-  && find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name "$OPENSSL_ARCH" -exec rm -rf {} \; \
-  # smoke tests
-  && node --version \
-  && npm --version \
-  && rm -rf /tmp/*
+# Install only runtime dependencies
+RUN apk add --no-cache ca-certificates libssl3 libstdc++ libgcc bash curl git nano && \
+  mkdir /app && addgroup -g 1000 node && \
+  adduser -u 1000 -G node -s /bin/sh -D node
 
-RUN apk add --no-cache bash
+COPY --from=builder /node-install/usr/local /usr/local
 COPY --from=node-24-alpine /usr/local/bin/docker-entrypoint.sh /usr/local/bin
 WORKDIR /app
 ENV NPM_CONFIG_LOGLEVEL=warn PATH=$PATH:/app/node_modules/.bin

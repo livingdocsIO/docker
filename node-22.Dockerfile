@@ -1,5 +1,4 @@
 FROM node:22-alpine3.21
 RUN apk add --no-cache bash curl git nano && mkdir /app
 WORKDIR /app
-ENV NPM_CONFIG_LOGLEVEL warn
-ENV PATH $PATH:/app/node_modules/.bin
+ENV NPM_CONFIG_LOGLEVEL=warn PATH=$PATH:/app/node_modules/.bin
