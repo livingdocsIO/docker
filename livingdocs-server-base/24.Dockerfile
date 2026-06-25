@@ -3,5 +3,6 @@
 #   ADD .npmrc package*.json /app/
 #   RUN npm ci
 #   ADD . /app
-FROM livingdocs/node:24
+ARG VERSION=24
+FROM livingdocs/node:${VERSION}
 ADD ./wait-for-services /bin/wait-for-services
