@@ -1,4 +1,4 @@
-FROM node:24-alpine3.23 AS node-24-alpine
+FROM node:26-alpine3.23 AS node-26-alpine
 
 # This build script has 5 differences compared to the original build script
 # 1. It enables pointer compression using ./configure --experimental-enable-pointer-compression
@@ -8,7 +8,7 @@ FROM node:24-alpine3.23 AS node-24-alpine
 # 5. does not ship with yarn
 
 FROM alpine:3.23 as builder
-ENV NODE_VERSION 26.0.0
+ENV NODE_VERSION 26.12.1
 
 RUN apk add --no-cache build-base git python3 curl linux-headers openssl-dev ccache bash procps
 WORKDIR /build
@@ -28,7 +28,7 @@ RUN apk add --no-cache ca-certificates libssl3 libstdc++ libgcc bash curl git na
   adduser -u 1000 -G node -s /bin/sh -D node
 
 COPY --from=builder /node-install/usr/local /usr/local
-COPY --from=node-24-alpine /usr/local/bin/docker-entrypoint.sh /usr/local/bin
+COPY --from=node-26-alpine /usr/local/bin/docker-entrypoint.sh /usr/local/bin
 WORKDIR /app
 ENV NPM_CONFIG_LOGLEVEL=warn PATH=$PATH:/app/node_modules/.bin
 
