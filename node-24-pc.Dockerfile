@@ -1,4 +1,4 @@
-FROM node:24-alpine3.22 AS node-24-alpine
+FROM node:24-alpine3.23 AS node-24-alpine
 
 # This build script has 5 differences compared to the original build script
 # 1. It enables pointer compression using ./configure --experimental-enable-pointer-compression
@@ -7,8 +7,8 @@ FROM node:24-alpine3.22 AS node-24-alpine
 # 4. Add curl, git & nano to container
 # 5. does not ship with yarn
 
-FROM alpine:3.22 as builder
-ENV NODE_VERSION 24.15.0
+FROM alpine:3.23 as builder
+ENV NODE_VERSION 24.22.1
 
 RUN apk add --no-cache build-base git python3 curl linux-headers openssl-dev ccache bash procps
 WORKDIR /build
@@ -20,7 +20,7 @@ RUN make install DESTDIR=/node-install
 # =============================================================================
 # Stage 2: Runtime image
 # =============================================================================
-FROM alpine:3.22
+FROM alpine:3.23
 
 # Install only runtime dependencies
 RUN apk add --no-cache ca-certificates libssl3 libstdc++ libgcc bash curl git nano && \
