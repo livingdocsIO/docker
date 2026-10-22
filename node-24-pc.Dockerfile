@@ -8,7 +8,7 @@ FROM node:24-alpine3.23 AS node-24-alpine
 # 5. does not ship with yarn
 
 FROM alpine:3.23 as builder
-ENV NODE_VERSION 24.22.1
+ENV NODE_VERSION=24.22.1
 
 RUN apk add --no-cache build-base git python3 curl linux-headers openssl-dev ccache bash procps
 WORKDIR /build

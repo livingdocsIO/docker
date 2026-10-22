@@ -12,8 +12,8 @@ RUN apk add --no-cache curl git tini nano bash jq sed npm && \
   chmod a+x /root/.docker/cli-plugins/docker-buildx /usr/local/bin/regctl && \
   chown -R root:root /root/.docker /root/.ssh
 
-ENV PATH $PATH:./node_modules/.bin
-ENV DOCKER_BUILDKIT 1
-ENV DOCKER_CONFIG /root/.docker/
+ENV PATH=$PATH:./node_modules/.bin
+ENV DOCKER_BUILDKIT=1
+ENV DOCKER_CONFIG=/root/.docker/
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
