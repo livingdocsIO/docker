@@ -14,7 +14,8 @@ RUN apk add --no-cache build-base git python3 curl linux-headers openssl-dev cca
 WORKDIR /build
 RUN git clone --depth 1 --branch v${NODE_VERSION} https://github.com/nodejs/node.git .
 RUN ./configure --experimental-enable-pointer-compression --prefix=/usr/local
-RUN make -j2
+ARG MAKE_JOBS
+RUN make -j${MAKE_JOBS:-$(nproc)}
 RUN make install DESTDIR=/node-install
 
 # =============================================================================
