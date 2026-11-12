@@ -1,0 +1,58 @@
+name: Node images
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - README.md
+      - node-*.Dockerfile
+      - livingdocs-server-base/**
+      - livingdocs-editor-base/**
+      - .github/scripts/node-images.mjs
+      - .github/workflows/node-image*.yml
+  # Retries images that waited for the official node image of every platform
+  schedule:
+    - cron: '47 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild and overwrite the current tags of every image
+        type: boolean
+        default: false
+
+concurrency:
+  group: node-images
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      lines: ${{ steps.plan.outputs.lines }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: plan
+        env:
+          FLAGS: ${{ inputs.force && '--force' || '' }}
+        run: echo "lines=$(node .github/scripts/node-images.mjs plan ${FLAGS:+"$FLAGS"})" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.lines != '[]'
+    name: ${{ matrix.line.line }}
+    strategy:
+      fail-fast: false
+      matrix:
+        line: ${{ fromJSON(needs.plan.outputs.lines) }}
+    uses: ./.github/workflows/node-image.yml
+    with:
+      dockerfile: ${{ matrix.line.dockerfile }}
+      version: ${{ matrix.line.version }}
+      pointer_compression: ${{ matrix.line.pointer_compression }}
+      build_node: ${{ matrix.line.build_node }}
+      node_tags: ${{ toJSON(matrix.line.node_tags) }}
+      node_tag: ${{ matrix.line.node_tag }}
+      bases: ${{ toJSON(matrix.line.bases) }}
+    secrets: inherit
