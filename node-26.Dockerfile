@@ -1,4 +1,4 @@
-FROM node:26.12.1-alpine3.23
+FROM node:26.13.1-alpine3.23
 RUN apk add --no-cache bash curl git nano && mkdir /app
 WORKDIR /app
 ENV NPM_CONFIG_LOGLEVEL=warn
