@@ -13,7 +13,7 @@ FROM node:24-alpine3.23 AS node-24-alpine
 FROM --platform=$BUILDPLATFORM alpine:3.23 AS builder
 ARG BUILDARCH
 ARG TARGETARCH
-ENV NODE_VERSION=24.22.1
+ENV NODE_VERSION=24.22.3
 
 RUN apk add --no-cache build-base binutils-gold git python3 curl linux-headers bash procps xz rsync bzip2 patch
 
