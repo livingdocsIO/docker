@@ -1,0 +1,52 @@
+name: Node release
+
+on:
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+    inputs:
+      rebuild_all:
+        description: Bump every image tag, also without a new node release, e.g. for alpine security updates
+        type: boolean
+        default: false
+
+concurrency:
+  group: node-release
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: release
+        env:
+          FLAGS: ${{ inputs.rebuild_all && '--all' || '' }}
+        run: |
+          changes=$(node .github/scripts/node-images.mjs release ${FLAGS:+"$FLAGS"})
+          echo "changes=$changes" >> "$GITHUB_OUTPUT"
+
+      - if: steps.release.outputs.changes != '[]'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHANGES: ${{ steps.release.outputs.changes }}
+        run: |
+          versions=$(jq -r '[.[] | select(.from != .to) | .to] | unique | join(", ")' <<< "$CHANGES")
+          title="fix: Release node ${versions:-image rebuild} images"
+          branch="node-release/$(jq -r '[.[] | .tags[]] | join(" ")' <<< "$CHANGES" | sha1sum | cut -c1-12)"
+          if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+            echo "$branch exists already, its pull request is waiting for a review"
+            exit 0
+          fi
+          body=$(jq -r '"Merging this builds and pushes:\n" + ([.[] | "- `\(.line)`: node \(.from) → \(.to), " + ([.tags[] | "`\(.)`"] | join(", "))] | join("\n"))' <<< "$CHANGES")
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git add README.md node-*.Dockerfile
+          git commit -m "$title"
+          git push origin "$branch"
+          gh pr create --base master --head "$branch" --title "$title" --body "$body"

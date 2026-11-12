@@ -1,6 +1,18 @@
 # Docker
 
-This repo is set up to use automated builds on docker hub.
+The `livingdocs/node`, `livingdocs/server-base` and `livingdocs/editor-base` images are built by GitHub Actions,
+all other images are built and pushed by hand with the commands below.
+
+### Node releases
+
+The `buildcontainer` lines of `livingdocs/node`, `livingdocs/server-base` and `livingdocs/editor-base` below are the list of images and their tags, the workflows parse them.
+Keep one line per image, its first tag being `<major>.<counter>[-pc]`.
+
+- [Node release](.github/workflows/node-release.yml) runs daily. When nodejs.org has a newer release of a pinned node major, it pins it in `node-<major>[-pc].Dockerfile`, bumps the counter of every image of that major in this README and opens a pull request. Releases wait until the official `node:<version>-alpine` image is published for `amd64` and `arm64`. Run it manually with `rebuild_all` to bump every image without a node release, e.g. for alpine security updates.
+- [Node images](.github/workflows/node-images.yml) runs on every merge to master and every 6 hours. It builds and pushes every image whose first tag is missing on Docker Hub, for `linux/amd64` and `linux/arm64` on native runners, and checks the node version and pointer compression of the node images. The base images are built `FROM` the exact node tag of the same run.
+
+Node images needs the repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+To add a node major, add its `node-<major>.Dockerfile`, `livingdocs-{server,editor}-base/<major>.Dockerfile` and `buildcontainer` lines.
 
 ### Multi arch builds
 
